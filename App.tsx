@@ -19,20 +19,69 @@ export default function App() {
         setIsTookMedicine(!isTookMedicine);
     }
 
-    // アプリ起動時に今日の薬の記録を取得
+    // 薬を飲み始めて何日目か
+    const [countDays, setCountDays] = useState(0);
+    // jsonから全日数分のtrueを数える
+    // setCountDays();
+
+    let todayRecord = {
+        month: month,
+        day: day,
+        week: week,
+        isTookMedicine: isTookMedicine,
+    };
+
+    // let allDaysRecord = {
+    //     countDays: 2,
+    //     dailyRecord: [todayRecord],
+    // };
+    // アプリ起動時にAsyncStorageから記録を取得
+    // アプリ起動時に、前回から日付が変わっていたら、今日の記録を追加
+
+    // AsyncStorageから記録を取得
     useEffect(() => {
         (async () => {
-            const booleanAsString = await AsyncStorage.getItem(
-                "isTookMedicine"
+            const recordAsString: string | null = await AsyncStorage.getItem(
+                "record"
             );
-            setIsTookMedicine(booleanAsString === "true" ? true : false);
+            // AsyncStorageに記録がないので、新規作成
+            if (recordAsString === null) {
+                setIsTookMedicine(false);
+                setCountDays(0);
+
+                const record = {
+                    countDays: 0,
+                    dailyRecord: [todayRecord],
+                };
+
+                AsyncStorage.setItem("record", JSON.stringify(record));
+            }
+            //
+            else {
+                const record = JSON.parse(recordAsString);
+
+                const latestRecord = record["dailyRecord"].at(-1);
+                //
+
+                // アプリ起動日が、前回起動日と同日だったら、記録を取得
+                if (record.day === day) {
+                    setIsTookMedicine(
+                        record.isTookMedicine === "true" ? true : false
+                    );
+                } // アプリ起動が、前回起動日と異なる日だったら、記録を新規作成
+                else {
+                    setIsTookMedicine(false);
+                    setCountDays(record.countDays + 1);
+                }
+            }
         })();
         // 上記の括弧をつけることで即時関数を実行
     }, []);
 
     // AsyncStorageに記録を保存
     useEffect(() => {
-        AsyncStorage.setItem("isTookMedicine", String(isTookMedicine));
+        AsyncStorage.setItem("record", JSON.stringify(todaysRecord));
+        // AsyncStorage.setItem("isTookMedicine", String(isTookMedicine));
     }, [isTookMedicine]);
 
     return (
@@ -41,6 +90,10 @@ export default function App() {
             <Text>
                 {month}月{day}日({week})
             </Text>
+            {/* {isTookMedicine ? undefined : (
+                <Text>{`Today is my ${countDays}th medication.`}</Text>
+            )} */}
+            <Text>{``}</Text>
             <Button
                 onPress={onPressTookMedicine}
                 title={
@@ -51,6 +104,9 @@ export default function App() {
                 color={isTookMedicine ? "gray" : "#841584"}
                 accessibilityLabel='if you took medicine today, push this button'
             />
+            {/* {isTookMedicine ? (
+                <Text>{`I took ${countDays} times.`}</Text>
+            ) : undefined} */}
             <Text>{`${isTookMedicine}`}</Text>
             <StatusBar style='auto' />
         </View>
