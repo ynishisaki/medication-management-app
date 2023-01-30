@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Button, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
@@ -15,28 +15,43 @@ export default function App() {
     // 今日薬を飲んだか
     const [isTookMedicine, setIsTookMedicine] = useState(false);
 
+    interface Record {
+        dailyRecord: {
+            month: number;
+            day: number;
+            week: string;
+            tookMedicine: boolean;
+        }[];
+    }
+
+    const [allDayRecord, setAllDayRecord] = useState<Record>({
+        dailyRecord: [
+            {
+                month: month,
+                day: day,
+                week: week,
+                tookMedicine: false,
+            },
+        ],
+    });
+
     function onPressTookMedicine() {
         setIsTookMedicine(!isTookMedicine);
+        setAllDayRecord({
+            dailyRecord: [
+                ...allDayRecord.dailyRecord,
+                {
+                    month: month,
+                    day: day,
+                    week: week,
+                    tookMedicine: isTookMedicine,
+                },
+            ],
+        });
     }
 
     // 薬を飲み始めて何日目か
-    const [countDays, setCountDays] = useState(0);
-    // jsonから全日数分のtrueを数える
-    // setCountDays();
-
-    let todayRecord = {
-        month: month,
-        day: day,
-        week: week,
-        isTookMedicine: isTookMedicine,
-    };
-
-    // let allDaysRecord = {
-    //     countDays: 2,
-    //     dailyRecord: [todayRecord],
-    // };
-    // アプリ起動時にAsyncStorageから記録を取得
-    // アプリ起動時に、前回から日付が変わっていたら、今日の記録を追加
+    const [countDays, setCountDays] = useState<number>(0);
 
     // AsyncStorageから記録を取得
     useEffect(() => {
@@ -44,34 +59,31 @@ export default function App() {
             const recordAsString: string | null = await AsyncStorage.getItem(
                 "record"
             );
-            // AsyncStorageに記録がないので、新規作成
+            // AsyncStorageに記録がないので、デフォルトのallDayRecordを利用する
             if (recordAsString === null) {
-                setIsTookMedicine(false);
-                setCountDays(0);
-
-                const record = {
-                    countDays: 0,
-                    dailyRecord: [todayRecord],
-                };
-
-                AsyncStorage.setItem("record", JSON.stringify(record));
             }
             //
             else {
                 const record = JSON.parse(recordAsString);
-
-                const latestRecord = record["dailyRecord"].at(-1);
-                //
+                const latestRecord = record.dailyRecord.at(-1); // 最後の要素を取得
 
                 // アプリ起動日が、前回起動日と同日だったら、記録を取得
-                if (record.day === day) {
-                    setIsTookMedicine(
-                        record.isTookMedicine === "true" ? true : false
-                    );
-                } // アプリ起動が、前回起動日と異なる日だったら、記録を新規作成
+                if (latestRecord.day === day) {
+                    setAllDayRecord(record);
+                }
+                // アプリ起動日が、前回起動日と異なる日だったら、今日の記録を追加
                 else {
-                    setIsTookMedicine(false);
-                    setCountDays(record.countDays + 1);
+                    setAllDayRecord({
+                        dailyRecord: [
+                            ...record.dailyRecord,
+                            {
+                                month: month,
+                                day: day,
+                                week: week,
+                                tookMedicine: false,
+                            },
+                        ],
+                    });
                 }
             }
         })();
@@ -80,9 +92,15 @@ export default function App() {
 
     // AsyncStorageに記録を保存
     useEffect(() => {
-        AsyncStorage.setItem("record", JSON.stringify(todaysRecord));
-        // AsyncStorage.setItem("isTookMedicine", String(isTookMedicine));
-    }, [isTookMedicine]);
+        AsyncStorage.setItem("record", JSON.stringify(allDayRecord));
+
+        // jsonから全日数分のtrueを数える
+        setCountDays(
+            allDayRecord.dailyRecord.filter(
+                (record) => record.tookMedicine === true
+            ).length
+        );
+    }, [allDayRecord]);
 
     return (
         <View style={styles.container}>
@@ -90,9 +108,19 @@ export default function App() {
             <Text>
                 {month}月{day}日({week})
             </Text>
-            {/* {isTookMedicine ? undefined : (
+            {/* <Text>{JSON.stringify(allDayRecord)}</Text> */}
+            <Text>
+                {JSON.stringify(
+                    allDayRecord.dailyRecord[
+                        allDayRecord.dailyRecord.length - 1
+                    ]
+                )}
+            </Text>
+            {allDayRecord.dailyRecord[allDayRecord.dailyRecord.length - 1]
+                .isTookMedicine ? undefined : (
                 <Text>{`Today is my ${countDays}th medication.`}</Text>
-            )} */}
+            )}
+            <Text>{`${countDays}`}</Text>
             <Text>{``}</Text>
             <Button
                 onPress={onPressTookMedicine}
@@ -104,9 +132,10 @@ export default function App() {
                 color={isTookMedicine ? "gray" : "#841584"}
                 accessibilityLabel='if you took medicine today, push this button'
             />
-            {/* {isTookMedicine ? (
+            {allDayRecord.dailyRecord[allDayRecord.dailyRecord.length - 1]
+                .isTookMedicine ? (
                 <Text>{`I took ${countDays} times.`}</Text>
-            ) : undefined} */}
+            ) : undefined}
             <Text>{`${isTookMedicine}`}</Text>
             <StatusBar style='auto' />
         </View>
