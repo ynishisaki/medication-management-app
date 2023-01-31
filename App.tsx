@@ -15,39 +15,30 @@ export default function App() {
     // 今日薬を飲んだか
     const [isTookMedicine, setIsTookMedicine] = useState(false);
 
-    interface Record {
-        dailyRecord: {
-            month: number;
-            day: number;
-            week: string;
-            tookMedicine: boolean;
-        }[];
-    }
+    const [dailyRecord, setDailyRecord] = useState([
+        {
+            month: month,
+            day: day,
+            week: week,
+            tookMedicine: false,
+        },
+    ]);
 
-    const [allDayRecord, setAllDayRecord] = useState<Record>({
-        dailyRecord: [
+    function onPressTookMedicine() {
+        setIsTookMedicine(!isTookMedicine);
+        setDailyRecord([
+            ...dailyRecord.slice(0, dailyRecord.length - 1),
             {
                 month: month,
                 day: day,
                 week: week,
-                tookMedicine: false,
+                tookMedicine: !isTookMedicine, // この時点でisTookMedicineはsetStateされていないことに注意
             },
-        ],
-    });
-
-    function onPressTookMedicine() {
-        setIsTookMedicine(!isTookMedicine);
-        setAllDayRecord({
-            dailyRecord: [
-                ...allDayRecord.dailyRecord,
-                {
-                    month: month,
-                    day: day,
-                    week: week,
-                    tookMedicine: isTookMedicine,
-                },
-            ],
-        });
+        ]);
+        // jsonから全日数分のtrueを数える
+        setCountDays(
+            dailyRecord.filter((record) => record.tookMedicine === !true).length // この時点でisTookMedicineはsetStateされていないことに注意
+        );
     }
 
     // 薬を飲み始めて何日目か
@@ -59,31 +50,30 @@ export default function App() {
             const recordAsString: string | null = await AsyncStorage.getItem(
                 "record"
             );
-            // AsyncStorageに記録がないので、デフォルトのallDayRecordを利用する
+            // AsyncStorageに記録がないので、デフォルトのdailyRecordを利用する
             if (recordAsString === null) {
             }
             //
             else {
                 const record = JSON.parse(recordAsString);
-                const latestRecord = record.dailyRecord.at(-1); // 最後の要素を取得
+                const latestRecord = record.at(-1); // 最後の要素を取得
 
                 // アプリ起動日が、前回起動日と同日だったら、記録を取得
                 if (latestRecord.day === day) {
-                    setAllDayRecord(record);
+                    setIsTookMedicine(latestRecord.tookMedicine);
+                    setDailyRecord(record);
                 }
                 // アプリ起動日が、前回起動日と異なる日だったら、今日の記録を追加
                 else {
-                    setAllDayRecord({
-                        dailyRecord: [
-                            ...record.dailyRecord,
-                            {
-                                month: month,
-                                day: day,
-                                week: week,
-                                tookMedicine: false,
-                            },
-                        ],
-                    });
+                    setDailyRecord([
+                        ...record.slice(0, record.length - 1),
+                        {
+                            month: month,
+                            day: day,
+                            week: week,
+                            tookMedicine: false,
+                        },
+                    ]);
                 }
             }
         })();
@@ -92,32 +82,23 @@ export default function App() {
 
     // AsyncStorageに記録を保存
     useEffect(() => {
-        AsyncStorage.setItem("record", JSON.stringify(allDayRecord));
+        AsyncStorage.setItem("record", JSON.stringify(dailyRecord));
+    }, [dailyRecord]);
 
-        // jsonから全日数分のtrueを数える
-        setCountDays(
-            allDayRecord.dailyRecord.filter(
-                (record) => record.tookMedicine === true
-            ).length
-        );
-    }, [allDayRecord]);
+    // 注意！AsyncStorageを初期化
+    // useEffect(() => {
+    //     (async () => {
+    //         await AsyncStorage.clear();
+    //     })();
+    // }, []);
 
     return (
         <View style={styles.container}>
-            <Text>today</Text>
-            <Text>
-                {month}月{day}日({week})
-            </Text>
-            {/* <Text>{JSON.stringify(allDayRecord)}</Text> */}
-            <Text>
-                {JSON.stringify(
-                    allDayRecord.dailyRecord[
-                        allDayRecord.dailyRecord.length - 1
-                    ]
-                )}
-            </Text>
-            {allDayRecord.dailyRecord[allDayRecord.dailyRecord.length - 1]
-                .isTookMedicine ? undefined : (
+            <Text>{`today is ${month}月${day}日(${week})`}</Text>
+
+            <Text>{JSON.stringify(dailyRecord)}</Text>
+
+            {dailyRecord[dailyRecord.length - 1].tookMedicine ? undefined : (
                 <Text>{`Today is my ${countDays}th medication.`}</Text>
             )}
             <Text>{`${countDays}`}</Text>
@@ -132,8 +113,7 @@ export default function App() {
                 color={isTookMedicine ? "gray" : "#841584"}
                 accessibilityLabel='if you took medicine today, push this button'
             />
-            {allDayRecord.dailyRecord[allDayRecord.dailyRecord.length - 1]
-                .isTookMedicine ? (
+            {dailyRecord[dailyRecord.length - 1].tookMedicine ? (
                 <Text>{`I took ${countDays} times.`}</Text>
             ) : undefined}
             <Text>{`${isTookMedicine}`}</Text>
