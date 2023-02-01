@@ -28,6 +28,7 @@ export default function App() {
         setIsTookMedicine(!isTookMedicine);
         setDailyRecord([
             ...dailyRecord.slice(0, dailyRecord.length - 1),
+            // 今日の記録だけ更新
             {
                 month: month,
                 day: day,
@@ -66,7 +67,7 @@ export default function App() {
                 // アプリ起動日が、前回起動日と異なる日だったら、今日の記録を追加
                 else {
                     setDailyRecord([
-                        ...record.slice(0, record.length - 1),
+                        ...record,
                         {
                             month: month,
                             day: day,
@@ -94,15 +95,19 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <Text>{`today is ${month}月${day}日(${week})`}</Text>
+            <Text
+                style={
+                    styles.dateText
+                }>{`today is ${month}月${day}日(${week})`}</Text>
 
             <Text>{JSON.stringify(dailyRecord)}</Text>
 
             {dailyRecord[dailyRecord.length - 1].tookMedicine ? undefined : (
                 <Text>{`Today is my ${countDays}th medication.`}</Text>
             )}
-            <Text>{`${countDays}`}</Text>
-            <Text>{``}</Text>
+
+            {/* <View style={styles.separator} /> */}
+
             <Button
                 onPress={onPressTookMedicine}
                 title={
@@ -110,13 +115,19 @@ export default function App() {
                         ? "I took my medicine today!"
                         : "take medicine"
                 }
-                color={isTookMedicine ? "gray" : "#841584"}
+                color={isTookMedicine ? "gray" : "#F7CCBF"} //#f49da5
                 accessibilityLabel='if you took medicine today, push this button'
             />
             {dailyRecord[dailyRecord.length - 1].tookMedicine ? (
                 <Text>{`I took ${countDays} times.`}</Text>
             ) : undefined}
-            <Text>{`${isTookMedicine}`}</Text>
+            <Button
+                // onPress={}
+                title='have bleeding'
+                color='#f18690'
+                accessibilityLabel='if you have some bleeding or spotting, push this button'
+            />
+
             <StatusBar style='auto' />
         </View>
     );
@@ -125,8 +136,14 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#DDE5FC",
         alignItems: "center",
         justifyContent: "center",
+    },
+    dateText: {
+        fontSize: 40,
+        // lineHeight: 50,
+        borderBottomColor: "black",
+        borderBottomWidth: 1,
     },
 });
