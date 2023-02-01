@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Button, Text, View } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Buttons } from "./components/Buttons";
+import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
@@ -108,26 +109,14 @@ export default function App() {
                 <Text>{`Today is my ${countDays}th medication.`}</Text>
             )}
 
-            {/* <View style={styles.separator} /> */}
-
-            <Button
-                onPress={onPressTookMedicine}
-                title={
-                    isTookMedicine
-                        ? "I took my medicine today!"
-                        : "take medicine"
-                }
-                color={isTookMedicine ? "gray" : "#F7CCBF"} //#f49da5
-                accessibilityLabel='if you took medicine today, push this button'
-            />
             {dailyRecord[dailyRecord.length - 1].tookMedicine ? (
                 <Text>{`I took ${countDays} times.`}</Text>
             ) : undefined}
-            <Button
-                onPress={onPressHaveBleeding}
-                title='have bleeding'
-                color='#f18690'
-                accessibilityLabel='if you have some bleeding or spotting, push this button'
+
+            <Buttons
+                onPressTookMedicine={onPressTookMedicine}
+                onPressHaveBleeding={onPressHaveBleeding}
+                isTookMedicine={isTookMedicine}
             />
 
             <StatusBar style='auto' />
