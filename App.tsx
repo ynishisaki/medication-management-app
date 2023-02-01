@@ -42,6 +42,8 @@ export default function App() {
         );
     }
 
+    function onPressHaveBleeding() {}
+
     // 薬を飲み始めて何日目か
     const [countDays, setCountDays] = useState<number>(0);
 
@@ -122,7 +124,7 @@ export default function App() {
                 <Text>{`I took ${countDays} times.`}</Text>
             ) : undefined}
             <Button
-                // onPress={}
+                onPress={onPressHaveBleeding}
                 title='have bleeding'
                 color='#f18690'
                 accessibilityLabel='if you have some bleeding or spotting, push this button'
@@ -136,7 +138,6 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#DDE5FC",
         alignItems: "center",
         justifyContent: "center",
     },
