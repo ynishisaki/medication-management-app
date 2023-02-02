@@ -57,7 +57,7 @@ export default function App() {
             // AsyncStorageに記録がないので、デフォルトのdailyRecordを利用する
             if (recordAsString === null) {
             }
-            //
+            // AsyncStorageから記録取得、stateにsetする
             else {
                 const record = JSON.parse(recordAsString);
                 const latestRecord = record.at(-1); // 最後の要素を取得
@@ -67,10 +67,27 @@ export default function App() {
                     setIsTookMedicine(latestRecord.tookMedicine);
                     setDailyRecord(record);
                 }
-                // アプリ起動日が、前回起動日と異なる日だったら、今日の記録を追加
+                // アプリ起動日が、前回起動日と異なる日だったら、前回から今日までの記録を追加
                 else {
+                    const latestDate = new Date(
+                        latestRecord.year,
+                        latestRecord.month,
+                        latestRecord.day
+                    );
+                    let lapsedRecord = [];
+                    // 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることのに注意
+                    while (latestDate.getTime() < today.getTime()) {
+                        latestDate.setDate(latestDate.getDate() + 1);
+                        latestRecord.concat({
+                            month: latestDate.getMonth(),
+                            day: latestDate.getDate(),
+                            week: weekArray[latestDate.getDay()],
+                            tookMedicine: false,
+                        });
+                    }
+
                     setDailyRecord([
-                        ...record,
+                        ...lapsedRecord,
                         {
                             month: month,
                             day: day,
