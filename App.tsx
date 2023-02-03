@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Buttons } from "./components/Buttons";
+import { DateList } from "./components/DateList";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -115,6 +116,7 @@ export default function App() {
 
     return (
         <View style={styles.container}>
+            <DateList />
             <Text
                 style={
                     styles.dateText
@@ -146,6 +148,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+        marginTop: 50,
+        marginBottom: 500,
     },
     dateText: {
         fontSize: 40,
