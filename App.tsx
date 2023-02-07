@@ -6,41 +6,34 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
-    type recordType = {
+    interface recordType {
         [key: string]: {
-            tookMedicine: Boolean;
-            haveBleeding: Boolean;
+            tookMedicine: boolean;
+            haveBleeding: boolean;
         };
-    };
-
-    // 今日の日付を取得
-    const today = new Date();
-
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-    const weekArray = ["日", "月", "火", "水", "木", "金", "土"];
-    const week = weekArray[today.getDay()];
+    }
 
     type datePropertyNameType = (selectedDate: Date) => string;
+
     const datePropertyName: datePropertyNameType = (selectedDate) => {
         const offset = selectedDate.getTimezoneOffset();
         selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
         return selectedDate.toISOString().split("T")[0];
     };
 
+    const today = datePropertyName(new Date()); // YYYY-DD-MM
+
+    const [selectedDatePropertyName, setSelectedDatePropertyName] =
+        useState<string>(today);
+
     // 薬を飲み始めて何日目か
     const [countDays, setCountDays] = useState<number>(0);
+    const [countBleedingDays, setCountBleedingDays] = useState<number>(0);
 
     // 今日薬を飲んだか
     const [isTookMedicine, setIsTookMedicine] = useState(false);
     // 今日出血があったか
     const [isHaveBleeding, setIsHaveBleeding] = useState(false);
-
-    // const d = `${month}-${day}-${week}`;
-    const d = datePropertyName(today);
-
-    const [selectedDatePropertyName, setSelectedDatePropertyName] =
-        useState<string>(d);
 
     const [dailyRecord, setDailyRecord] = useState<recordType>({
         [selectedDatePropertyName]: {
@@ -51,31 +44,28 @@ export default function App() {
 
     function onPressTookMedicine() {
         setIsTookMedicine(!isTookMedicine);
+
         setDailyRecord({
             ...dailyRecord,
             // 今日の記録だけ更新
             [selectedDatePropertyName]: {
-                tookMedicine: !isTookMedicine, // この時点でisTookMedicineはsetStateされていないことに注意
-                haveBleeding: isHaveBleeding, // 変更なし
+                tookMedicine: !isTookMedicine, // isTookMedicineは前回の値であることに注意
+                haveBleeding: isHaveBleeding,
             },
         });
-        // let trueDays = dailyRecord.filter(
-        //     (record: eachDayRecordType) => record.tookMedicine === true
-        // ).length;
-        const asArray = Object.entries(dailyRecord);
 
+        //jsonから全日数分のtrueを数える;
+        const asArray = Object.entries(dailyRecord);
         const trueDays = asArray.filter(
             ([key, value]) => value.tookMedicine === true
         ).length;
 
-        // jsonから全日数分のtrueを数える
-        setCountDays(
-            !isTookMedicine ? trueDays + 1 : trueDays // この時点でisTookMedicineはsetStateされていないことに注意
-        );
+        setCountDays(!isTookMedicine ? trueDays + 1 : trueDays); // isTookMedicineは前回の値であることに注意
     }
 
     function onPressHaveBleeding() {
         setIsHaveBleeding(!isHaveBleeding);
+
         setDailyRecord({
             ...dailyRecord,
             [selectedDatePropertyName]: {
@@ -83,8 +73,20 @@ export default function App() {
                 haveBleeding: !isHaveBleeding,
             },
         });
+
         // jsonから今日から直近でtrueで何日連続しているか数える
-        setCountDays(4);
+        const asArray = Object.entries(dailyRecord);
+
+        let i: number = 0;
+
+        for (const [key, value] of asArray.slice(0, -1).reverse()) {
+            if (value.haveBleeding === true) {
+                i++;
+            } else {
+                break;
+            }
+        }
+        setCountBleedingDays(!isHaveBleeding ? i + 1 : 0);
     }
 
     // AsyncStorageから記録を取得
@@ -105,7 +107,7 @@ export default function App() {
 
                 // アプリ起動日が、前回起動日と同日だったら、記録を取得
                 if (
-                    latestRecord.day === day // 左辺プロパティ名を取得するもの
+                    latestRecord.day === selectedDatePropertyName.slice() // 左辺プロパティ名を取得するもの
                 ) {
                     setIsTookMedicine(latestRecord.tookMedicine);
                     setIsHaveBleeding(latestRecord.haveBleeding);
@@ -120,15 +122,15 @@ export default function App() {
                     );
                     let lapsedRecord = {};
                     // 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることのに注意
-                    while (latestDate.getTime() < today.getTime()) {
-                        latestDate.setDate(latestDate.getDate() + 1);
-                        latestRecord.concat({
-                            month: latestDate.getMonth(),
-                            day: latestDate.getDate(),
-                            week: weekArray[latestDate.getDay()],
-                            tookMedicine: false,
-                        });
-                    }
+                    // while (latestDate.getTime() < today.getTime()) {
+                    //     latestDate.setDate(latestDate.getDate() + 1);
+                    //     latestRecord.concat({
+                    //         month: latestDate.getMonth(),
+                    //         day: latestDate.getDate(),
+                    //         week: weekArray[latestDate.getDay()],
+                    //         tookMedicine: false,
+                    //     });
+                    // }
 
                     setDailyRecord({
                         ...record,
@@ -158,10 +160,7 @@ export default function App() {
     return (
         <View style={styles.container}>
             <DateList />
-            <Text
-                style={
-                    styles.dateText
-                }>{`today is ${month}月${day}日(${week})`}</Text>
+            <Text style={styles.dateText}>selectedDatePropertyName</Text>
 
             <Text>{JSON.stringify(dailyRecord)}</Text>
             <Text>{selectedDatePropertyName}</Text>
@@ -180,6 +179,7 @@ export default function App() {
                 isTookMedicine={isTookMedicine}
             />
 
+            <Text>{countBleedingDays}</Text>
             <StatusBar style='auto' />
         </View>
     );
