@@ -15,6 +15,16 @@ export interface recordType {
 export type datePropertyNameType = (selectedDate: Date) => string;
 
 export default function App() {
+    function showDate (dateStrings: string) {
+        const date = new Date(dateStrings);
+
+        const day = date.getDate();
+        const week = date.getDay();
+        const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
+
+        return `${day}(${weekArr[week]})`;
+    }
+
 	const datePropertyName: datePropertyNameType = (selectedDate) => {
 		const offset = selectedDate.getTimezoneOffset();
 		selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
@@ -163,7 +173,8 @@ export default function App() {
 			<Text style={styles.dateText}>{selectedDatePropertyName}</Text>
 
 			<Text>{JSON.stringify(dailyRecord)}</Text>
-			<Text>{selectedDatePropertyName}</Text>
+
+            <Text>{showDate(selectedDatePropertyName)}</Text>
 
 			{dailyRecord[selectedDatePropertyName]?.tookMedicine ? undefined : (
 				<Text>{`Today is my ${countDays}th medication.`}</Text>

@@ -24,8 +24,9 @@ const firstIndicatorStyles = {
 };
 
 export const DateList = (props: recordType) => {
-	const arr = Object.entries(props);
-	const arrLength = arr.length;
+	const propsArr = Object.entries(props);
+	const propsArrLength = propsArr.length;
+	const keyArray = propsArr.map((item) => item[0]);
 
 	const [currentPage, setCurrentPage] = React.useState<number>(4);
 
