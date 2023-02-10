@@ -6,35 +6,39 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface recordType {
-	[key: string]: {
-		tookMedicine: boolean;
-		haveBleeding: boolean;
-	};
+	startDate: string;
+	dailyRecord: [dailyRecordType]; // task: ここは複数の要素を持つ配列にしたい
 }
 
-export type datePropertyNameType = (selectedDate: Date) => string;
+export interface dailyRecordType {
+	date: string;
+	tookMedicine: boolean;
+	haveBleeding: boolean;
+}
+
+export type getDateStringsType = (selectedDate: Date) => string;
 
 export default function App() {
-    function showDate (dateStrings: string) {
-        const date = new Date(dateStrings);
+	function showDate(dateStrings: string) {
+		const date = new Date(dateStrings);
 
-        const day = date.getDate();
-        const week = date.getDay();
-        const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
+		const day = date.getDate();
+		const week = date.getDay();
+		const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
 
-        return `${day}(${weekArr[week]})`;
-    }
+		return `${day}(${weekArr[week]})`;
+	}
 
-	const datePropertyName: datePropertyNameType = (selectedDate) => {
+	function getDateStrings(selectedDate: Date) {
 		const offset = selectedDate.getTimezoneOffset();
 		selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
+
 		return selectedDate.toISOString().split("T")[0];
-	};
+	}
 
-	const today = datePropertyName(new Date()); // YYYY-DD-MM
+	const today = getDateStrings(new Date()); // YYYY-DD-MM
 
-	const [selectedDatePropertyName, setSelectedDatePropertyName] =
-		useState<string>(today);
+	const [selectedDate, setselectedDate] = useState<string>(today);
 
 	// 薬を飲み始めて何日目か
 	const [countDays, setCountDays] = useState<number>(0);
@@ -45,27 +49,34 @@ export default function App() {
 	// 今日出血があったか
 	const [isHaveBleeding, setIsHaveBleeding] = useState(false);
 
-	const [dailyRecord, setDailyRecord] = useState<recordType>({
-		[selectedDatePropertyName]: {
-			tookMedicine: false,
-			haveBleeding: false,
-		},
+	const [record, setRecord] = useState<recordType>({
+		startDate: today,
+		dailyRecord: [
+			{
+				date: selectedDate,
+				tookMedicine: false,
+				haveBleeding: false,
+			},
+		],
 	});
 
 	function onPressTookMedicine() {
 		setIsTookMedicine(!isTookMedicine);
 
-		setDailyRecord({
-			...dailyRecord,
-			// 今日の記録だけ更新
-			[selectedDatePropertyName]: {
-				tookMedicine: !isTookMedicine, // isTookMedicineは前回の値であることに注意
-				haveBleeding: isHaveBleeding,
-			},
+		setRecord({
+			...record,
+			dailyRecord: [
+				...record.dailyRecord, // task　今日の記録だけ更新したい。これでOK?
+				{
+					date: selectedDate,
+					tookMedicine: !isTookMedicine, // isTookMedicineは前回の値であることに注意
+					haveBleeding: isHaveBleeding,
+				},
+			],
 		});
 
 		//jsonから全日数分のtrueを数える;
-		const asArray = Object.entries(dailyRecord);
+		const asArray = Object.entries(record);
 		const trueDays = asArray.filter(
 			([key, value]) => value.tookMedicine === true
 		).length;
@@ -76,21 +87,27 @@ export default function App() {
 	function onPressHaveBleeding() {
 		setIsHaveBleeding(!isHaveBleeding);
 
-		setDailyRecord({
-			...dailyRecord,
-			[selectedDatePropertyName]: {
-				tookMedicine: isTookMedicine,
-				haveBleeding: !isHaveBleeding,
-			},
+		setRecord({
+			...record,
+			dailyRecord: [
+				...record.dailyRecord,
+				{
+					date: selectedDate,
+					tookMedicine: isTookMedicine,
+					haveBleeding: !isHaveBleeding,
+				},
+			],
 		});
 
-		// jsonから今日から直近でtrueで何日連続しているか数える
-		const asArray = Object.entries(dailyRecord);
+		// jsonから、今日から直近で出血が何日連続しているか数える
+		const dailyRecordArr = record.dailyRecord.reverse;
+		const length = dailyRecordArr.length;
 
 		let i: number = 0;
 
-		for (const [key, value] of asArray.slice(0, -1).reverse()) {
-			if (value.haveBleeding === true) {
+		//task: json書き換えに伴い変更
+		for dailyRecordArr in rcd {
+			if (rcd.haveBleeding === true) {
 				i++;
 			} else {
 				break;
@@ -105,7 +122,7 @@ export default function App() {
 			const recordAsString: string | null = await AsyncStorage.getItem(
 				"record"
 			);
-			// AsyncStorageに記録がないので、デフォルトのdailyRecordを利用する
+			// AsyncStorageに記録がないので、デフォルトのrecordを利用する
 			if (recordAsString === null) {
 			}
 			// AsyncStorageから記録取得、stateにsetする
@@ -117,11 +134,11 @@ export default function App() {
 
 				// アプリ起動日が、前回起動日と同日だったら、記録を取得
 				if (
-					latestRecord.day === selectedDatePropertyName.slice() // 左辺プロパティ名を取得するもの
+					latestRecord.day === selectedDate.slice() // 左辺プロパティ名を取得するもの
 				) {
 					setIsTookMedicine(latestRecord.tookMedicine);
 					setIsHaveBleeding(latestRecord.haveBleeding);
-					setDailyRecord(record);
+					setRecord(record);
 				}
 				// アプリ起動日が、前回起動日と異なる日だったら、前回から今日までの記録を追加
 				else {
@@ -142,9 +159,9 @@ export default function App() {
 					//     });
 					// }
 
-					setDailyRecord({
+					setRecord({
 						...record,
-						[selectedDatePropertyName]: {
+						[selectedDate]: {
 							tookMedicine: false,
 							haveBleeding: false,
 						},
@@ -157,8 +174,8 @@ export default function App() {
 
 	// AsyncStorageに記録を保存
 	useEffect(() => {
-		AsyncStorage.setItem("record", JSON.stringify(dailyRecord));
-	}, [dailyRecord]);
+		AsyncStorage.setItem("record", JSON.stringify(record));
+	}, [record]);
 
 	// 注意！AsyncStorageを初期化
 	// useEffect(() => {
@@ -169,18 +186,20 @@ export default function App() {
 
 	return (
 		<View style={styles.container}>
-			<DateList dailyRecord={dailyRecord} />
-			<Text style={styles.dateText}>{selectedDatePropertyName}</Text>
+			<DateList record={record} />
+			<Text style={styles.dateText}>{selectedDate}</Text>
 
-			<Text>{JSON.stringify(dailyRecord)}</Text>
+			<Text>{JSON.stringify(record)}</Text>
 
-            <Text>{showDate(selectedDatePropertyName)}</Text>
+			<Text>{showDate(selectedDate)}</Text>
 
-			{dailyRecord[selectedDatePropertyName]?.tookMedicine ? undefined : (
+			{record.dailyRecord.filter((rcd) => rcd.date === selectedDate)[0]
+				.tookMedicine ? undefined : (
 				<Text>{`Today is my ${countDays}th medication.`}</Text>
 			)}
 
-			{dailyRecord[selectedDatePropertyName]?.tookMedicine ? (
+			{record.dailyRecord.filter((rcd) => rcd.date === selectedDate)[0]
+				.tookMedicine ? (
 				<Text>{`I took ${countDays} times.`}</Text>
 			) : undefined}
 
