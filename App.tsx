@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface recordType {
 	startDate: string;
-	dailyRecord: [dailyRecordType]; // task: ここは複数の要素を持つ配列にしたい
+	dailyRecord: dailyRecordType[]; // task: ここは複数の要素を持つ配列にしたい
 }
 
 export interface dailyRecordType {
@@ -100,20 +100,15 @@ export default function App() {
 		});
 
 		// jsonから、今日から直近で出血が何日連続しているか数える
-		const dailyRecordArr = record.dailyRecord.reverse;
-		const length = dailyRecordArr.length;
-
-		let i: number = 0;
-
-		//task: json書き換えに伴い変更
-		for dailyRecordArr in rcd {
-			if (rcd.haveBleeding === true) {
-				i++;
+		let count = 0;
+		for (let i = record.dailyRecord.length - 1; i > -1; i--) {
+			if (record.dailyRecord[i].haveBleeding === true) {
+				count++;
 			} else {
 				break;
 			}
 		}
-		setCountBleedingDays(!isHaveBleeding ? i + 1 : 0);
+		setCountBleedingDays(!isHaveBleeding ? count + 1 : 0);
 	}
 
 	// AsyncStorageから記録を取得
