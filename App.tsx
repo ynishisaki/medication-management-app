@@ -66,19 +66,19 @@ export default function App() {
 		setRecord({
 			...record,
 			dailyRecord: [
-				...record.dailyRecord, // task　今日の記録だけ更新したい。これでOK?
 				{
 					date: selectedDate,
 					tookMedicine: !isTookMedicine, // isTookMedicineは前回の値であることに注意
 					haveBleeding: isHaveBleeding,
 				},
+				...record.dailyRecord.slice(1), 
 			],
 		});
 
-		//jsonから全日数分のtrueを数える;
-		const asArray = Object.entries(record);
-		const trueDays = asArray.filter(
-			([key, value]) => value.tookMedicine === true
+		// jsonから全日数分のtrueを数える
+		// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
+		const trueDays = record.dailyRecord.filter(
+			(record) => record.tookMedicine === true
 		).length;
 
 		setCountDays(!isTookMedicine ? trueDays + 1 : trueDays); // isTookMedicineは前回の値であることに注意
@@ -86,22 +86,22 @@ export default function App() {
 
 	function onPressHaveBleeding() {
 		setIsHaveBleeding(!isHaveBleeding);
-
+		
 		setRecord({
 			...record,
 			dailyRecord: [
-				...record.dailyRecord,
 				{
 					date: selectedDate,
 					tookMedicine: isTookMedicine,
 					haveBleeding: !isHaveBleeding,
 				},
+				...record.dailyRecord.slice(1), 
 			],
 		});
 
 		// jsonから、今日から直近で出血が何日連続しているか数える
 		let count = 0;
-		for (let i = record.dailyRecord.length - 1; i > -1; i--) {
+		for (let i = 0; i < record.dailyRecord.length; i++) {
 			if (record.dailyRecord[i].haveBleeding === true) {
 				count++;
 			} else {
@@ -123,43 +123,50 @@ export default function App() {
 			// AsyncStorageから記録取得、stateにsetする
 			else {
 				const record = JSON.parse(recordAsString);
-				const latestProperty = Object.keys(record).at(-1); // 最後のプロパティ名を取得
-				const latestRecord =
-					record[latestProperty as keyof typeof record];
+				const latestDailyRecord = record.dailyRecord[0];
 
 				// アプリ起動日が、前回起動日と同日だったら、記録を取得
 				if (
-					latestRecord.day === selectedDate.slice() // 左辺プロパティ名を取得するもの
+					latestDailyRecord.date === selectedDate // 左辺プロパティ名を取得するもの
 				) {
-					setIsTookMedicine(latestRecord.tookMedicine);
-					setIsHaveBleeding(latestRecord.haveBleeding);
+					setIsTookMedicine(latestDailyRecord.tookMedicine);
+					setIsHaveBleeding(latestDailyRecord.haveBleeding);
 					setRecord(record);
 				}
 				// アプリ起動日が、前回起動日と異なる日だったら、前回から今日までの記録を追加
 				else {
-					const latestDate = new Date(
-						latestRecord.year,
-						latestRecord.month,
-						latestRecord.day
-					);
-					let lapsedRecord = {};
+					// const latestDate = new Date(
+					// 	latestRecord.year,
+					// 	latestRecord.month,
+					// 	latestRecord.day
+					// );
+					let latestDate = new Date(latestDailyRecord.date);
+					let todayDate = new Date(today);
+					let lapsedRecords: Array<dailyRecordType[]> = [];
 					// 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることのに注意
-					// while (latestDate.getTime() < today.getTime()) {
-					//     latestDate.setDate(latestDate.getDate() + 1);
-					//     latestRecord.concat({
-					//         month: latestDate.getMonth(),
-					//         day: latestDate.getDate(),
-					//         week: weekArray[latestDate.getDay()],
-					//         tookMedicine: false,
-					//     });
-					// }
+					while (latestDate.getTime() < todayDate.getTime()) {
+					    latestDate.setDate(latestDate.getDate() + 1);
+							lapsedRecords = [
+								{
+									date: getDateStrings(latestDate),
+									tookMedicine: isTookMedicine,
+									haveBleeding: !isHaveBleeding,
+								},
+								...lapsedRecords,
+							]
+					    latestRecord.concat({
+								date: getDateStrings(latestDate),
+								tookMedicine: isTookMedicine,
+								haveBleeding: !isHaveBleeding,
+					    });
+					}
 
 					setRecord({
 						...record,
-						[selectedDate]: {
-							tookMedicine: false,
-							haveBleeding: false,
-						},
+						dailyRecord: [
+							lapsedRecord,
+							...record.dailyRecord, 
+						],
 					});
 				}
 			}
@@ -188,7 +195,7 @@ export default function App() {
 
 			<Text>{showDate(selectedDate)}</Text>
 
-			{record.dailyRecord.filter((rcd) => rcd.date === selectedDate)[0]
+			{record.dailyRecord.filter(rcd => rcd.date === selectedDate)[0]
 				.tookMedicine ? undefined : (
 				<Text>{`Today is my ${countDays}th medication.`}</Text>
 			)}
