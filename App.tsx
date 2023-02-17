@@ -135,36 +135,32 @@ export default function App() {
 				}
 				// アプリ起動日が、前回起動日と異なる日だったら、前回から今日までの記録を追加
 				else {
-					// const latestDate = new Date(
-					// 	latestRecord.year,
-					// 	latestRecord.month,
-					// 	latestRecord.day
-					// );
 					let latestDate = new Date(latestDailyRecord.date);
 					let todayDate = new Date(today);
-					let lapsedRecords: Array<dailyRecordType[]> = [];
+					
+					let lapsedRecords: Array<dailyRecordType> = [];
 					// 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることのに注意
 					while (latestDate.getTime() < todayDate.getTime()) {
 					    latestDate.setDate(latestDate.getDate() + 1);
 							lapsedRecords = [
 								{
 									date: getDateStrings(latestDate),
-									tookMedicine: isTookMedicine,
-									haveBleeding: !isHaveBleeding,
+									tookMedicine: false,
+									haveBleeding: false,
 								},
 								...lapsedRecords,
 							]
-					    latestRecord.concat({
-								date: getDateStrings(latestDate),
-								tookMedicine: isTookMedicine,
-								haveBleeding: !isHaveBleeding,
-					    });
+					    // latestRecord.concat({
+							// 	date: getDateStrings(latestDate),
+							// 	tookMedicine: isTookMedicine,
+							// 	haveBleeding: !isHaveBleeding,
+					    // });
 					}
 
 					setRecord({
 						...record,
 						dailyRecord: [
-							lapsedRecord,
+							lapsedRecords,
 							...record.dailyRecord, 
 						],
 					});
