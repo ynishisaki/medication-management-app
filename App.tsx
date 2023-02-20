@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Buttons } from "./components/Buttons";
+import { BouncyCheckBoxes } from "./components/BouncyCheckBoxes";
 import { DateList } from "./components/DateList";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -71,7 +72,7 @@ export default function App() {
 					tookMedicine: !isTookMedicine, // isTookMedicineは前回の値であることに注意
 					haveBleeding: isHaveBleeding,
 				},
-				...record.dailyRecord.slice(1), 
+				...record.dailyRecord.slice(1),
 			],
 		});
 
@@ -86,7 +87,7 @@ export default function App() {
 
 	function onPressHaveBleeding() {
 		setIsHaveBleeding(!isHaveBleeding);
-		
+
 		setRecord({
 			...record,
 			dailyRecord: [
@@ -95,7 +96,7 @@ export default function App() {
 					tookMedicine: isTookMedicine,
 					haveBleeding: !isHaveBleeding,
 				},
-				...record.dailyRecord.slice(1), 
+				...record.dailyRecord.slice(1),
 			],
 		});
 
@@ -137,32 +138,29 @@ export default function App() {
 				else {
 					let latestDate = new Date(latestDailyRecord.date);
 					let todayDate = new Date(today);
-					
+
 					let lapsedRecords: Array<dailyRecordType> = [];
 					// 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることのに注意
 					while (latestDate.getTime() < todayDate.getTime()) {
-					    latestDate.setDate(latestDate.getDate() + 1);
-							lapsedRecords = [
-								{
-									date: getDateStrings(latestDate),
-									tookMedicine: false,
-									haveBleeding: false,
-								},
-								...lapsedRecords,
-							]
-					    // latestRecord.concat({
-							// 	date: getDateStrings(latestDate),
-							// 	tookMedicine: isTookMedicine,
-							// 	haveBleeding: !isHaveBleeding,
-					    // });
+						latestDate.setDate(latestDate.getDate() + 1);
+						lapsedRecords = [
+							{
+								date: getDateStrings(latestDate),
+								tookMedicine: false,
+								haveBleeding: false,
+							},
+							...lapsedRecords,
+						];
+						// latestRecord.concat({
+						// 	date: getDateStrings(latestDate),
+						// 	tookMedicine: isTookMedicine,
+						// 	haveBleeding: !isHaveBleeding,
+						// });
 					}
 
 					setRecord({
 						...record,
-						dailyRecord: [
-							lapsedRecords,
-							...record.dailyRecord, 
-						],
+						dailyRecord: [lapsedRecords, ...record.dailyRecord],
 					});
 				}
 			}
@@ -191,7 +189,7 @@ export default function App() {
 
 			<Text>{showDate(selectedDate)}</Text>
 
-			{record.dailyRecord.filter(rcd => rcd.date === selectedDate)[0]
+			{record.dailyRecord.filter((rcd) => rcd.date === selectedDate)[0]
 				.tookMedicine ? undefined : (
 				<Text>{`Today is my ${countDays}th medication.`}</Text>
 			)}
@@ -201,7 +199,12 @@ export default function App() {
 				<Text>{`I took ${countDays} times.`}</Text>
 			) : undefined}
 
-			<Buttons
+			{/* <Buttons
+				onPressTookMedicine={onPressTookMedicine}
+				onPressHaveBleeding={onPressHaveBleeding}
+				isTookMedicine={isTookMedicine}
+			/> */}
+			<BouncyCheckBoxes
 				onPressTookMedicine={onPressTookMedicine}
 				onPressHaveBleeding={onPressHaveBleeding}
 				isTookMedicine={isTookMedicine}
