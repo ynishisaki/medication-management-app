@@ -160,7 +160,7 @@ export default function App() {
 
 					setRecord({
 						...record,
-						dailyRecord: [lapsedRecords, ...record.dailyRecord],
+						dailyRecord: [...lapsedRecords, ...record.dailyRecord],
 					});
 				}
 			}

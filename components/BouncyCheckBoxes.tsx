@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export type CheckBoxProps = {
@@ -22,9 +22,10 @@ export const BouncyCheckBoxes = (props: CheckBoxProps) => {
 				fillColor='#f18690'
 				unfillColor='#F7CCBF'
 				text='take medicine'
+				textComponent={<Text>"take medicine"?</Text>}
 				iconStyle={{ borderColor: "red" }}
 				innerIconStyle={{ borderWidth: 2 }}
-				textStyle={{ fontFamily: "JosefinSans-Regular" }}
+				// textStyle={{ fontFamily: "JosefinSans-Regular" }}
 				onPress={props.onPressTookMedicine}
 			/>
 
@@ -35,7 +36,7 @@ export const BouncyCheckBoxes = (props: CheckBoxProps) => {
 				text='have bleeding'
 				iconStyle={{ borderColor: "red" }}
 				innerIconStyle={{ borderWidth: 2 }}
-				textStyle={{ fontFamily: "JosefinSans-Regular" }}
+				// textStyle={{ fontFamily: "JosefinSans-Regular" }}
 				onPress={props.onPressHaveBleeding}
 			/>
 		</View>
