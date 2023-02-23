@@ -4,7 +4,15 @@ import { recordType } from "../App";
 import { CheckBox } from "./CheckBox";
 
 // 薬飲んだかと、出血したかチェックボックス
-export const TodaysRecord = ({ props }: { props: recordType }) => {
+export const TodaysRecord = ({
+	recordProps,
+	onPressTookMedicine,
+	onPressHaveBleeding,
+}: {
+	recordProps: recordType;
+	onPressTookMedicine: () => void;
+	onPressHaveBleeding: () => void;
+}) => {
 	function showDate(dateStrings: string) {
 		const date = new Date(dateStrings);
 
@@ -29,13 +37,13 @@ export const TodaysRecord = ({ props }: { props: recordType }) => {
 		<>
 			<View style={styles.dateTextContainer}>
 				<Text style={styles.dateText}>
-					{showDate(props.dailyRecord[0].date)}
+					{showDate(recordProps.dailyRecord[0].date)}
 				</Text>
 			</View>
 			<Text style={styles.restPeriodMessage}>{"今日は休薬日です。"}</Text>
 			<View style={styles.checkBoxLayout}>
-				<CheckBox type='服薬' />
-				<CheckBox type='出血' />
+				<CheckBox type='服薬' onPress={onPressTookMedicine} />
+				<CheckBox type='出血' onPress={onPressHaveBleeding} />
 			</View>
 		</>
 	);

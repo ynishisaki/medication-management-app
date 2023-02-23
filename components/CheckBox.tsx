@@ -2,18 +2,12 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
-export type CheckBoxProps = {
-	onPressTookMedicine: () => void;
-	onPressHaveBleeding: () => void;
-	isTookMedicine: boolean;
-};
-
 // 薬飲んだかと、出血したかチェックボックス
 export const CheckBox = ({
-	// props,
+	onPress,
 	type,
 }: {
-	// props: CheckBoxProps;
+	onPress: () => void;
 	type: string;
 }) => {
 	return (
@@ -53,7 +47,7 @@ export const CheckBox = ({
 				// 	backgroundColor: "black",
 				// }}
 				// textStyle={{ fontFamily: "JosefinSans-Regular" }}
-				// onPress={props.onPressTookMedicine}
+				onPress={onPress}
 			/>
 		</View>
 	);

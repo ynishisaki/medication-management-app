@@ -179,11 +179,27 @@ export default function App() {
 				<View style={styles.header}></View>
 				<View style={styles.contentsLayout}>
 					<View style={styles.todaysRecord}>
-						<TodaysRecord props={record} />
+						<TodaysRecord
+							recordProps={record}
+							onPressTookMedicine={onPressTookMedicine}
+							onPressHaveBleeding={onPressHaveBleeding}
+						/>
 					</View>
 					<View style={styles.weeklyRecord}></View>
 					<View style={styles.sheetRecord}></View>
 					<Text>{JSON.stringify(record)}</Text>
+					{record.dailyRecord.filter(
+						(rcd) => rcd.date === selectedDate
+					)[0].tookMedicine ? undefined : (
+						<Text>{`Today is my ${countDays}th medication.`}</Text>
+					)}
+
+					{/* for check */}
+					{record.dailyRecord.filter(
+						(rcd) => rcd.date === selectedDate
+					)[0].tookMedicine ? (
+						<Text>{`I took ${countDays} times.`}</Text>
+					) : undefined}
 				</View>
 				{/* <DateList record={record} />
 				<Text style={styles.dateText}>{selectedDate}</Text>
@@ -192,17 +208,7 @@ export default function App() {
 
 				<Text>{showDate(selectedDate)}</Text>
 
-				{record.dailyRecord.filter(
-					(rcd) => rcd.date === selectedDate
-				)[0].tookMedicine ? undefined : (
-					<Text>{`Today is my ${countDays}th medication.`}</Text>
-				)}
-
-				{record.dailyRecord.filter(
-					(rcd) => rcd.date === selectedDate
-				)[0].tookMedicine ? (
-					<Text>{`I took ${countDays} times.`}</Text>
-				) : undefined}
+				
 
 				<BouncyCheckBoxes
 					onPressTookMedicine={onPressTookMedicine}
