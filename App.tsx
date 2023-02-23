@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import { Buttons } from "./components/Buttons";
 import { BouncyCheckBoxes } from "./components/BouncyCheckBoxes";
 import { DateList } from "./components/DateList";
@@ -182,36 +182,44 @@ export default function App() {
 
 	return (
 		<View style={styles.container}>
-			<DateList record={record} />
-			<Text style={styles.dateText}>{selectedDate}</Text>
+			<ImageBackground
+				source={require("./assets/bgimage.png")}
+				resizeMode='cover'
+				style={styles.bgimage}>
+				<View style={styles.header}></View>
+				<View style={styles.contentsLayout}>
+					<View style={styles.todaysRecord}></View>
+					<View style={styles.weeklyRecord}></View>
+					<View style={styles.sheetRecord}></View>
+				</View>
+				{/* <DateList record={record} />
+				<Text style={styles.dateText}>{selectedDate}</Text>
 
-			<Text>{JSON.stringify(record)}</Text>
+				<Text>{JSON.stringify(record)}</Text>
 
-			<Text>{showDate(selectedDate)}</Text>
+				<Text>{showDate(selectedDate)}</Text>
 
-			{record.dailyRecord.filter((rcd) => rcd.date === selectedDate)[0]
-				.tookMedicine ? undefined : (
-				<Text>{`Today is my ${countDays}th medication.`}</Text>
-			)}
+				{record.dailyRecord.filter(
+					(rcd) => rcd.date === selectedDate
+				)[0].tookMedicine ? undefined : (
+					<Text>{`Today is my ${countDays}th medication.`}</Text>
+				)}
 
-			{record.dailyRecord.filter((rcd) => rcd.date === selectedDate)[0]
-				.tookMedicine ? (
-				<Text>{`I took ${countDays} times.`}</Text>
-			) : undefined}
+				{record.dailyRecord.filter(
+					(rcd) => rcd.date === selectedDate
+				)[0].tookMedicine ? (
+					<Text>{`I took ${countDays} times.`}</Text>
+				) : undefined}
 
-			{/* <Buttons
-				onPressTookMedicine={onPressTookMedicine}
-				onPressHaveBleeding={onPressHaveBleeding}
-				isTookMedicine={isTookMedicine}
-			/> */}
-			<BouncyCheckBoxes
-				onPressTookMedicine={onPressTookMedicine}
-				onPressHaveBleeding={onPressHaveBleeding}
-				isTookMedicine={isTookMedicine}
-			/>
+				<BouncyCheckBoxes
+					onPressTookMedicine={onPressTookMedicine}
+					onPressHaveBleeding={onPressHaveBleeding}
+					isTookMedicine={isTookMedicine}
+				/>
 
-			<Text>{countBleedingDays}</Text>
-			<StatusBar style='auto' />
+				<Text>{countBleedingDays}</Text>
+				<StatusBar style='auto' /> */}
+			</ImageBackground>
 		</View>
 	);
 }
@@ -219,10 +227,49 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// alignItems: "center",
+		// justifyContent: "center",
+	},
+	bgimage: {
+		flex: 1,
+		// justifyContent: "center",
+	},
+	header: {
+		height: 47,
+		width: 47,
+		alignSelf: "flex-start",
+		backgroundColor: "gray",
+		marginTop: 25,
+		marginHorizontal: 16,
+	},
+	contentsLayout: {
+		flex: 1,
+		marginTop: 16,
+		marginHorizontal: 16,
 		justifyContent: "center",
-		// marginTop: 50,
-		// marginBottom: 500,
+		alignItems: "center",
+		gap: 16,
+		flexWrap: "wrap",
+		alignContent: "flex-start",
+	},
+	todaysRecord: {
+		height: 182,
+		width: 243,
+		marginBottom: 32,
+		backgroundColor: "white",
+		borderRadius: 32,
+	},
+	weeklyRecord: {
+		height: 126,
+		width: 330,
+		marginBottom: 24,
+		backgroundColor: "#63769C",
+		borderRadius: 18,
+	},
+	sheetRecord: {
+		height: 196,
+		width: 330,
+		backgroundColor: "#63769C",
+		borderRadius: 18,
 	},
 	dateText: {
 		fontSize: 40,
