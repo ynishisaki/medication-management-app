@@ -1,10 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import { Buttons } from "./components/Buttons";
-import { BouncyCheckBoxes } from "./components/BouncyCheckBoxes";
 import { DateList } from "./components/DateList";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TodaysRecord } from "./components/TodaysRecord";
 
 export interface recordType {
 	startDate: string;
@@ -20,16 +20,6 @@ export interface dailyRecordType {
 export type getDateStringsType = (selectedDate: Date) => string;
 
 export default function App() {
-	function showDate(dateStrings: string) {
-		const date = new Date(dateStrings);
-
-		const day = date.getDate();
-		const week = date.getDay();
-		const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
-
-		return `${day}(${weekArr[week]})`;
-	}
-
 	function getDateStrings(selectedDate: Date) {
 		const offset = selectedDate.getTimezoneOffset();
 		selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
@@ -188,9 +178,12 @@ export default function App() {
 				style={styles.bgimage}>
 				<View style={styles.header}></View>
 				<View style={styles.contentsLayout}>
-					<View style={styles.todaysRecord}></View>
+					<View style={styles.todaysRecord}>
+						<TodaysRecord props={record} />
+					</View>
 					<View style={styles.weeklyRecord}></View>
 					<View style={styles.sheetRecord}></View>
+					<Text>{JSON.stringify(record)}</Text>
 				</View>
 				{/* <DateList record={record} />
 				<Text style={styles.dateText}>{selectedDate}</Text>
@@ -271,10 +264,10 @@ const styles = StyleSheet.create({
 		backgroundColor: "#63769C",
 		borderRadius: 18,
 	},
-	dateText: {
-		fontSize: 40,
-		// lineHeight: 50,
-		borderBottomColor: "black",
-		borderBottomWidth: 1,
-	},
+	// dateText: {
+	// 	fontSize: 40,
+	// 	// lineHeight: 50,
+	// 	borderBottomColor: "black",
+	// 	borderBottomWidth: 1,
+	// },
 });
