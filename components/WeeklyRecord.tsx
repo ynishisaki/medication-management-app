@@ -2,15 +2,11 @@ import { StyleSheet, Text, View } from "react-native";
 import { recordType } from "../App";
 import { WeeklyCheckBox } from "./WeeklyCheckBox";
 
-// 薬飲んだかと、出血したかチェックボックス
 export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 	return (
 		<>
 			<View style={styles.titleContainer}>
-				<Text style={styles.titleText}>
-					{/* {setWeekArr(recordProps.dailyRecord[0].date)} */}
-					直近一週間の記録
-				</Text>
+				<Text style={styles.titleText}>直近一週間の記録</Text>
 			</View>
 			<View style={styles.bodyContainer}>
 				<Text>服薬</Text>
@@ -21,8 +17,6 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 				<Text>{"2日目"}</Text>
 			</View>
 			<View style={styles.checkBoxLayout}>
-				{/* 最近一週間のdailyRecordをみて、
-        曜日をTextで。tookMedicineとhaveBleedingをそれぞれBouncyCheckBoxで7日分作成する */}
 				<WeeklyCheckBox recordProps={recordProps} />
 			</View>
 		</>
@@ -39,9 +33,7 @@ const styles = StyleSheet.create({
 	},
 	titleText: {
 		fontSize: 12,
-		// textAlign: "center",
 		color: "#fff",
-		// lineHeight: 50,
 	},
 	bodyContainer: {
 		flexDirection: "row",

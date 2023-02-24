@@ -1,7 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
-import { Buttons } from "./components/Buttons";
-import { DateList } from "./components/DateList";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TodaysRecord } from "./components/TodaysRecord";
@@ -142,11 +140,6 @@ export default function App() {
 							},
 							...lapsedRecords,
 						];
-						// latestRecord.concat({
-						// 	date: getDateStrings(latestDate),
-						// 	tookMedicine: isTookMedicine,
-						// 	haveBleeding: !isHaveBleeding,
-						// });
 					}
 
 					setRecord({
@@ -204,23 +197,6 @@ export default function App() {
 						<Text>{`I took ${countDays} times.`}</Text>
 					) : undefined}
 				</View>
-				{/* <DateList record={record} />
-				<Text style={styles.dateText}>{selectedDate}</Text>
-
-				<Text>{JSON.stringify(record)}</Text>
-
-				<Text>{showDate(selectedDate)}</Text>
-
-				
-
-				<BouncyCheckBoxes
-					onPressTookMedicine={onPressTookMedicine}
-					onPressHaveBleeding={onPressHaveBleeding}
-					isTookMedicine={isTookMedicine}
-				/>
-
-				<Text>{countBleedingDays}</Text>
-				<StatusBar style='auto' /> */}
 			</ImageBackground>
 		</View>
 	);

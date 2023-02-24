@@ -4,15 +4,10 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export const WeeklyCheckBox = ({
 	recordProps,
-}: // onPressTookMedicine,
-// onPressHaveBleeding,
-{
+}: {
 	recordProps: recordType;
-	// onPressTookMedicine: () => void;
-	// onPressHaveBleeding: () => void;
 }) => {
 	const date = new Date();
-
 	const week = date.getDay();
 	const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
 

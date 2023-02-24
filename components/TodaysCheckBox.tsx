@@ -21,7 +21,7 @@ export const CheckBox = ({
 			<BouncyCheckbox
 				size={80}
 				fillColor='#F1E789'
-				unfillColor='#F6EFB5'
+				unfillColor='#f9f5cd'
 				// text='take medicine'
 				// textComponent={<Text style={styles.checkBoxText}>{type}</Text>}
 				textComponent={null}

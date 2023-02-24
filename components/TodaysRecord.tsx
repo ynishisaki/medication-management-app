@@ -2,7 +2,6 @@ import { StyleSheet, Text, View } from "react-native";
 import { recordType } from "../App";
 import { CheckBox } from "./TodaysCheckBox";
 
-// 薬飲んだかと、出血したかチェックボックス
 export const TodaysRecord = ({
 	recordProps,
 	onPressTookMedicine,
@@ -50,7 +49,6 @@ const styles = StyleSheet.create({
 	titleText: {
 		fontSize: 12,
 		textAlign: "center",
-		// lineHeight: 50,
 	},
 	restPeriodMessage: {
 		marginTop: 6,
