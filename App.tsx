@@ -5,6 +5,7 @@ import { DateList } from "./components/DateList";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TodaysRecord } from "./components/TodaysRecord";
+import { WeeklyRecord } from "./components/WeeklyRecord";
 
 export interface recordType {
 	startDate: string;
@@ -185,7 +186,9 @@ export default function App() {
 							onPressHaveBleeding={onPressHaveBleeding}
 						/>
 					</View>
-					<View style={styles.weeklyRecord}></View>
+					<View style={styles.weeklyRecord}>
+						<WeeklyRecord recordProps={record} />
+					</View>
 					<View style={styles.sheetRecord}></View>
 					<Text>{JSON.stringify(record)}</Text>
 					{record.dailyRecord.filter(

@@ -34,14 +34,10 @@ export const CheckBox = ({
 						// borderRadius: 50,
 					}
 				}
-				innerIconStyle={
-					{
-						// borderWidth: 2,
-						// width: 80,
-						// height: 80,
-						// borderRadius: 50,
-					}
-				}
+				innerIconStyle={{
+					borderWidth: 2,
+					borderColor: "#F1E789",
+				}}
 				// textStyle={{
 				// 	textDecorationLine: "none",
 				// 	backgroundColor: "black",

@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { recordType } from "../App";
-import { CheckBox } from "./CheckBox";
+import { CheckBox } from "./TodaysCheckBox";
 
 // 薬飲んだかと、出血したかチェックボックス
 export const TodaysRecord = ({
@@ -24,19 +23,10 @@ export const TodaysRecord = ({
 		return `${month}月${day}日(${weekArr[week]})`;
 	}
 
-	// function getDateStrings(selectedDate: Date) {
-	// 	const offset = selectedDate.getTimezoneOffset();
-	// 	selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
-
-	// 	return selectedDate.toISOString().split("T")[0];
-	// }
-
-	// const today = getDateStrings(new Date()); // YYYY-DD-MM
-
 	return (
 		<>
-			<View style={styles.dateTextContainer}>
-				<Text style={styles.dateText}>
+			<View style={styles.titleContainer}>
+				<Text style={styles.titleText}>
 					{showDate(recordProps.dailyRecord[0].date)}
 				</Text>
 			</View>
@@ -50,14 +40,14 @@ export const TodaysRecord = ({
 };
 
 const styles = StyleSheet.create({
-	dateTextContainer: {
+	titleContainer: {
 		marginTop: 16,
 		marginHorizontal: 20,
 		height: 26,
 		borderBottomColor: "#848484",
 		borderBottomWidth: 0.5,
 	},
-	dateText: {
+	titleText: {
 		fontSize: 12,
 		textAlign: "center",
 		// lineHeight: 50,
