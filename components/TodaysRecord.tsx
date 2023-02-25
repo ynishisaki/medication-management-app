@@ -31,8 +31,16 @@ export const TodaysRecord = ({
 			</View>
 			<Text style={styles.restPeriodMessage}>{"今日は休薬日です。"}</Text>
 			<View style={styles.checkBoxLayout}>
-				<CheckBox type='服薬' onPress={onPressTookMedicine} />
-				<CheckBox type='出血' onPress={onPressHaveBleeding} />
+				<CheckBox
+					isChecked={recordProps.dailyRecord[0].tookMedicine}
+					type='服薬'
+					onPress={onPressTookMedicine}
+				/>
+				<CheckBox
+					isChecked={recordProps.dailyRecord[0].haveBleeding}
+					type='出血'
+					onPress={onPressHaveBleeding}
+				/>
 			</View>
 		</>
 	);
@@ -40,14 +48,14 @@ export const TodaysRecord = ({
 
 const styles = StyleSheet.create({
 	titleContainer: {
-		marginTop: 16,
+		marginTop: 12,
 		marginHorizontal: 20,
-		height: 26,
+		height: 28,
 		borderBottomColor: "#848484",
 		borderBottomWidth: 0.5,
 	},
 	titleText: {
-		fontSize: 12,
+		fontSize: 18,
 		textAlign: "center",
 	},
 	restPeriodMessage: {

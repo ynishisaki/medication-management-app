@@ -4,17 +4,17 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 // 薬飲んだかと、出血したかチェックボックス
 export const CheckBox = ({
+	isChecked,
 	onPress,
 	type,
 }: {
+	isChecked: boolean;
 	onPress: () => void;
 	type: string;
 }) => {
 	return (
 		<View
 			style={{
-				// flexDirection: "row",
-				// justifyContent: "space-around",
 				alignItems: "center",
 			}}>
 			<Text style={styles.checkBoxText}>{type}</Text>
@@ -22,8 +22,7 @@ export const CheckBox = ({
 				size={80}
 				fillColor='#F1E789'
 				unfillColor='#f9f5cd'
-				// text='take medicine'
-				// textComponent={<Text style={styles.checkBoxText}>{type}</Text>}
+				isChecked={isChecked}
 				textComponent={null}
 				disableText={true}
 				iconStyle={
@@ -34,15 +33,10 @@ export const CheckBox = ({
 						// borderRadius: 50,
 					}
 				}
-				innerIconStyle={{
-					borderWidth: 2,
-					borderColor: "#F1E789",
-				}}
-				// textStyle={{
-				// 	textDecorationLine: "none",
-				// 	backgroundColor: "black",
+				// innerIconStyle={{
+				// 	borderWidth: 2,
+				// 	borderColor: "#F1E789",
 				// }}
-				// textStyle={{ fontFamily: "JosefinSans-Regular" }}
 				onPress={onPress}
 			/>
 		</View>
@@ -53,7 +47,5 @@ const styles = StyleSheet.create({
 	checkBoxText: {
 		fontSize: 12,
 		fontWeight: "bold",
-		// backgroundColor: "black",
-		// alignItems: "center",
 	},
 });
