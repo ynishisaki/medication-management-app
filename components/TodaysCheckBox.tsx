@@ -21,22 +21,24 @@ export const CheckBox = ({
 			<BouncyCheckbox
 				size={80}
 				fillColor='#F1E789'
-				unfillColor='#f9f5cd'
+				unfillColor='#fcfae8'
 				isChecked={isChecked}
 				textComponent={null}
 				disableText={true}
 				iconStyle={
 					{
-						// borderColor: "red",
+						// borderColor: "#fcfae8",
 						// width: 80,
 						// height: 80,
 						// borderRadius: 50,
 					}
 				}
-				// innerIconStyle={{
-				// 	borderWidth: 2,
-				// 	borderColor: "#F1E789",
-				// }}
+				innerIconStyle={
+					{
+						// 	borderWidth: 2,
+						// borderColor: "#fcfae8",
+					}
+				}
 				onPress={onPress}
 			/>
 		</View>

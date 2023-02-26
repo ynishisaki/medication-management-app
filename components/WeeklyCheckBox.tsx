@@ -9,7 +9,7 @@ export const WeeklyCheckBox = ({ isChecked }: { isChecked: boolean }) => {
 				style={styles.container}
 				size={25}
 				fillColor='#F1E789'
-				unfillColor='#F6EFB5'
+				unfillColor='#fcfae8'
 				isChecked={isChecked} // must set
 				disableText={true}
 				disabled={true}
