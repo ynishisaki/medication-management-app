@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View } from "react-native";
-c
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export const WeeklyCheckBox = ({ isChecked }: { isChecked: boolean }) => {
