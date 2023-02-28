@@ -29,33 +29,9 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 					<Text style={styles.subtitleText}>出血</Text>
 					<Text style={styles.numberOfDaysText}>{`${2}2日目`}</Text>
 				</View>
-
-				{/* {recentWeekArr.map((week) => (
-							<Text>{week}</Text>
-						))} */}
 				<View style={styles.bodyRecordLayout}>
 					{recordLength === 7
 						? [...recordProps.dailyRecord]
-								.slice(0, 7)
-								.reverse()
-								.map((record, index) => (
-									<View style={styles.weekTextLayout}>
-										{/* <Text>{recentWeekArr[index]}</Text>
-											<View style={styles.checkBoxLayout}>
-												<WeeklyCheckBox
-													isChecked={
-														record.tookMedicine
-													}
-												/>
-												<WeeklyCheckBox
-													isChecked={
-														record.haveBleeding
-													}
-												/>
-											</View> */}
-									</View>
-								))
-						: [...recordProps.dailyRecord]
 								.slice(0, recordLength)
 								.reverse()
 								.map((record, index) => (
@@ -64,16 +40,36 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 											<Text style={styles.weekTextLayout}>
 												{recentWeekArr[index]}
 											</Text>
-											{/* <View style={{ marginBottom: 4 }}> */}
 											<WeeklyCheckBox
 												isChecked={record.tookMedicine}
 											/>
-											{/* </View> */}
-											{/* <View style={{ marginBottom: 4 }}> */}
 											<WeeklyCheckBox
 												isChecked={record.haveBleeding}
 											/>
-											{/* </View> */}
+										</View>
+									</>
+								))
+						: [...recordProps.dailyRecord]
+								.reverse()
+								.map((record, index) => (
+									<>
+										<View style={styles.checkBoxLayout}>
+											<Text style={styles.weekTextLayout}>
+												{
+													recentWeekArr[
+														(index +
+															(7 -
+																recordLength)) %
+															7
+													]
+												}
+											</Text>
+											<WeeklyCheckBox
+												isChecked={record.tookMedicine}
+											/>
+											<WeeklyCheckBox
+												isChecked={record.haveBleeding}
+											/>
 										</View>
 									</>
 								))}
@@ -85,6 +81,14 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 
 const styles = StyleSheet.create({
 	titleContainer: {
+		flexDirection: "row",
+		// justifyContent: "space-between",
+		// alignItems: "center",
+		// alignSelf: "flex-end",
+		// justifyContent:"center",
+		// alignItems: "center",
+		// textAlign: "center",
+		// backgroundColor: "#000",
 		marginTop: 12,
 		marginHorizontal: 20,
 		height: 24,

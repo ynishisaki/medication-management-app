@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TodaysRecord } from "./components/TodaysRecord";
 import { WeeklyRecord } from "./components/WeeklyRecord";
+import { CurrentSheet } from "./components/CurrentSheet";
 
 export interface recordType {
 	startDate: string;
@@ -164,6 +165,10 @@ export default function App() {
 	//     })();
 	// }, []);
 
+	// for check
+	console.log(JSON.stringify(record));
+	console.log("countDays: " + countDays);
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground
@@ -182,20 +187,17 @@ export default function App() {
 					<View style={styles.weeklyRecord}>
 						<WeeklyRecord recordProps={record} />
 					</View>
-					<View style={styles.sheetRecord}></View>
-					<Text>{JSON.stringify(record)}</Text>
-					{record.dailyRecord.filter(
-						(rcd) => rcd.date === selectedDate
-					)[0].tookMedicine ? undefined : (
-						<Text>{`Today is my ${countDays}th medication.`}</Text>
-					)}
+					<View style={styles.sheetRecord}>
+						<CurrentSheet
+							countDays={countDays}
+							recordProps={record}
+						/>
 
-					{/* for check */}
-					{record.dailyRecord.filter(
-						(rcd) => rcd.date === selectedDate
-					)[0].tookMedicine ? (
-						<Text>{`I took ${countDays} times.`}</Text>
-					) : undefined}
+						{/* <Text>{JSON.stringify(record)}</Text>
+						{isTookMedicine && (
+							<Text>{`Today is my ${countDays}th medication.`}</Text>
+						)} */}
+					</View>
 				</View>
 			</ImageBackground>
 		</View>
@@ -205,11 +207,9 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// justifyContent: "center",
 	},
 	bgimage: {
 		flex: 1,
-		// justifyContent: "center",
 	},
 	header: {
 		height: 47,
@@ -225,7 +225,6 @@ const styles = StyleSheet.create({
 		marginHorizontal: 16,
 		justifyContent: "center",
 		alignItems: "center",
-		gap: 16,
 		flexWrap: "wrap",
 		alignContent: "flex-start",
 	},
