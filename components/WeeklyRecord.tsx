@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { recordType } from "../App";
+import { RightIcon } from "./Icons";
 import { WeeklyCheckBox } from "./WeeklyCheckBox";
 
 export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
@@ -21,6 +22,7 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 		<>
 			<View style={styles.titleContainer}>
 				<Text style={styles.titleText}>直近一週間の記録</Text>
+				<RightIcon />
 			</View>
 			<View style={styles.bodyContainer}>
 				<View style={styles.bodyTextLayout}>
@@ -82,21 +84,17 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 const styles = StyleSheet.create({
 	titleContainer: {
 		flexDirection: "row",
-		// justifyContent: "space-between",
-		// alignItems: "center",
-		// alignSelf: "flex-end",
-		// justifyContent:"center",
-		// alignItems: "center",
-		// textAlign: "center",
-		// backgroundColor: "#000",
-		marginTop: 12,
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginTop: 10,
 		marginHorizontal: 20,
-		height: 24,
+		height: 30,
 		borderBottomColor: "#fff",
 		borderBottomWidth: 0.5,
 	},
 	titleText: {
 		fontSize: 14,
+		lineHeight: 30,
 		color: "#fff",
 	},
 	bodyContainer: {

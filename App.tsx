@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MenuIcon } from "./components/Icons";
 import { TodaysRecord } from "./components/TodaysRecord";
 import { WeeklyRecord } from "./components/WeeklyRecord";
 import { CurrentSheet } from "./components/CurrentSheet";
@@ -175,7 +176,9 @@ export default function App() {
 				source={require("./assets/bgimage.png")}
 				resizeMode='cover'
 				style={styles.bgimage}>
-				<View style={styles.header}></View>
+				<View style={styles.header}>
+					<MenuIcon />
+				</View>
 				<View style={styles.contentsLayout}>
 					<View style={styles.todaysRecord}>
 						<TodaysRecord
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
 		height: 47,
 		width: 47,
 		alignSelf: "flex-start",
-		backgroundColor: "gray",
+		// backgroundColor: "gray",
 		marginTop: 25,
 		marginHorizontal: 16,
 	},
