@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { DropIcon, PillIcon } from "./Icons";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 // 薬飲んだかと、出血したかチェックボックス
@@ -35,10 +36,12 @@ export const CheckBox = ({
 				}
 				innerIconStyle={
 					{
+
 						// 	borderWidth: 2,
 						// borderColor: "#fcfae8",
 					}
 				}
+				ImageComponent={type === "服薬" ? PillIcon:DropIcon }
 				onPress={onPress}
 			/>
 		</View>
