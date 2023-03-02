@@ -232,11 +232,11 @@ const styles = StyleSheet.create({
 		alignContent: "flex-start",
 	},
 	todaysRecord: {
-		height: 182,
-		width: 243,
+		height: 200,
+		width: 260,
 		marginBottom: 32,
 		backgroundColor: "white",
-		borderRadius: 16,
+		borderRadius: 40,
 	},
 	weeklyRecord: {
 		height: 150,

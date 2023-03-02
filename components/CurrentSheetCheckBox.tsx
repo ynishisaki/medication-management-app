@@ -8,7 +8,7 @@ export const CurrentSheetCheckBox = ({ isChecked }: { isChecked: boolean }) => {
 				style={styles.container}
 				size={15}
 				fillColor='#848484'
-				unfillColor='#F7CCBF'
+				unfillColor='#F6B69A'
 				isChecked={isChecked} // must set
 				disableText={true}
 				disabled={true}

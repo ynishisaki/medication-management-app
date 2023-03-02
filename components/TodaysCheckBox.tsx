@@ -1,47 +1,28 @@
-import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { DropIcon, PillIcon } from "./Icons";
+import { DropLgIcon, PillLgIcon } from "./Icons";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 // 薬飲んだかと、出血したかチェックボックス
-export const CheckBox = ({
+export default ({
+	title,
 	isChecked,
 	onPress,
-	type,
 }: {
+	title: string;
 	isChecked: boolean;
 	onPress: () => void;
-	type: string;
 }) => {
 	return (
-		<View
-			style={{
-				alignItems: "center",
-			}}>
-			<Text style={styles.checkBoxText}>{type}</Text>
+		<View style={styles.container}>
+			<Text style={styles.checkBoxText}>{title}</Text>
 			<BouncyCheckbox
 				size={80}
-				fillColor='#F1E789'
-				unfillColor='#fcfae8'
+				fillColor='#F6B69A'
+				unfillColor='#fff'
 				isChecked={isChecked}
 				textComponent={null}
 				disableText={true}
-				iconStyle={
-					{
-						// borderColor: "#fcfae8",
-						// width: 80,
-						// height: 80,
-						// borderRadius: 50,
-					}
-				}
-				innerIconStyle={
-					{
-
-						// 	borderWidth: 2,
-						// borderColor: "#fcfae8",
-					}
-				}
-				ImageComponent={type === "服薬" ? PillIcon:DropIcon }
+				ImageComponent={title === "服薬" ? PillLgIcon : DropLgIcon}
 				onPress={onPress}
 			/>
 		</View>
@@ -49,6 +30,9 @@ export const CheckBox = ({
 };
 
 const styles = StyleSheet.create({
+	container: {
+		alignItems: "center",
+	},
 	checkBoxText: {
 		fontSize: 12,
 		fontWeight: "bold",

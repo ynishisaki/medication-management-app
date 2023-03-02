@@ -43,9 +43,11 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 												{recentWeekArr[index]}
 											</Text>
 											<WeeklyCheckBox
+												title='服薬'
 												isChecked={record.tookMedicine}
 											/>
 											<WeeklyCheckBox
+												title='出血'
 												isChecked={record.haveBleeding}
 											/>
 										</View>
