@@ -1,16 +1,12 @@
-import { StatusBar } from "expo-status-bar";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { ImageBackground, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuIcon } from "./components/Icons";
 import { TodaysRecord } from "./components/TodaysRecord";
 import { WeeklyRecord } from "./components/WeeklyRecord";
 import { CurrentSheet } from "./components/CurrentSheet";
 
-export interface recordType {
-	startDate: string;
-	dailyRecord: dailyRecordType[]; // task: ここは複数の要素を持つ配列にしたい
-}
+export type recordType = Array<dailyRecordType>;
 
 export interface dailyRecordType {
 	date: string;
@@ -30,42 +26,26 @@ export default function App() {
 
 	const today = getDateStrings(new Date()); // YYYY-DD-MM
 
-	const [selectedDate, setselectedDate] = useState<string>(today);
-
 	// 薬を飲み始めて何日目か
-	const [countDays, setCountDays] = useState<number>(0);
-	const [countBleedingDays, setCountBleedingDays] = useState<number>(0);
+	let countDays = 0;
+	let countBleedingDays = 0;
 
-	// 今日薬を飲んだか
-	const [isTookMedicine, setIsTookMedicine] = useState(false);
-	// 今日出血があったか
-	const [isHaveBleeding, setIsHaveBleeding] = useState(false);
-
-	const [record, setRecord] = useState<recordType>({
-		startDate: today,
-		dailyRecord: [
-			{
-				date: selectedDate,
-				tookMedicine: false,
-				haveBleeding: false,
-			},
-		],
-	});
+	const [record, setRecord] = useState<recordType>([
+		{
+			date: today,
+			tookMedicine: false, // 今日薬を飲んだか
+			haveBleeding: false, // 今日出血があったか
+		},
+	]);
 
 	function onPressTookMedicine() {
-		setIsTookMedicine(!isTookMedicine);
-
-		setRecord({
-			...record,
-			dailyRecord: [
-				{
-					date: selectedDate,
-					tookMedicine: !isTookMedicine, // isTookMedicineは前回の値であることに注意
-					haveBleeding: isHaveBleeding,
-				},
-				...record.dailyRecord.slice(1),
-			],
-		});
+		setRecord([
+			{
+				...record[0],
+				tookMedicine: !record[0].tookMedicine, // isTookMedicineは前回の値であることに注意
+			},
+			...record.slice(1),
+		]);
 
 		// jsonから全日数分のtrueを数える
 		// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
@@ -73,19 +53,18 @@ export default function App() {
 			(record) => record.tookMedicine === true
 		).length;
 
-		setCountDays(!isTookMedicine ? trueDays + 1 : trueDays); // isTookMedicineは前回の値であることに注意
+		countDays = !record.dailyRecord[0].tookMedicine
+			? trueDays + 1
+			: trueDays; // isTookMedicineは前回の値であることに注意
 	}
 
 	function onPressHaveBleeding() {
-		setIsHaveBleeding(!isHaveBleeding);
-
 		setRecord({
 			...record,
 			dailyRecord: [
 				{
-					date: selectedDate,
-					tookMedicine: isTookMedicine,
-					haveBleeding: !isHaveBleeding,
+					...record.dailyRecord[0],
+					haveBleeding: !record.dailyRecord[0].haveBleeding,
 				},
 				...record.dailyRecord.slice(1),
 			],
@@ -100,7 +79,7 @@ export default function App() {
 				break;
 			}
 		}
-		setCountBleedingDays(!isHaveBleeding ? count + 1 : 0);
+		countBleedingDays = !record.dailyRecord[0].haveBleeding ? count + 1 : 0;
 	}
 
 	// AsyncStorageから記録を取得
@@ -119,11 +98,19 @@ export default function App() {
 
 				// アプリ起動日が、前回起動日と同日だったら、記録を取得
 				if (
-					latestDailyRecord.date === selectedDate // 左辺プロパティ名を取得するもの
+					latestDailyRecord.date === today // 左辺プロパティ名を取得するもの
 				) {
-					setIsTookMedicine(latestDailyRecord.tookMedicine);
-					setIsHaveBleeding(latestDailyRecord.haveBleeding);
-					setRecord(record);
+					setRecord({
+						...record,
+						dailyRecord: [
+							{
+								...record.dailyRecord[0],
+								tookMedicine: latestDailyRecord.tookMedicine,
+								haveBleeding: latestDailyRecord.haveBleeding,
+							},
+							...record.dailyRecord.slice(1),
+						],
+					});
 				}
 				// アプリ起動日が、前回起動日と異なる日だったら、前回から今日までの記録を追加
 				else {
@@ -169,6 +156,7 @@ export default function App() {
 	// for check
 	console.log(JSON.stringify(record));
 	console.log("countDays: " + countDays);
+	console.log("countBleedingDays: " + countBleedingDays);
 
 	return (
 		<View style={styles.container}>
@@ -195,11 +183,6 @@ export default function App() {
 							countDays={countDays}
 							recordProps={record}
 						/>
-
-						{/* <Text>{JSON.stringify(record)}</Text>
-						{isTookMedicine && (
-							<Text>{`Today is my ${countDays}th medication.`}</Text>
-						)} */}
 					</View>
 				</View>
 			</ImageBackground>
