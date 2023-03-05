@@ -7,9 +7,14 @@ import { WeeklyRecord } from "./components/WeeklyRecord";
 import { CurrentSheet } from "./components/CurrentSheet";
 
 export type recordType = {
-	startDate: string;
+	initialSheetSettings: initialSheetSettingsType;
 	dailyRecord: Array<dailyRecordType>;
 };
+
+export interface initialSheetSettingsType {
+	numOfPillsPerSheet: number;
+	beginSheetIndex: number;
+}
 
 export interface dailyRecordType {
 	date: string;
@@ -34,7 +39,10 @@ export default function App() {
 	let countBleedingDays = 0;
 
 	const [record, setRecord] = useState<recordType>({
-		startDate: today,
+		initialSheetSettings: {
+			numOfPillsPerSheet: 24,
+			beginSheetIndex: 1,
+		},
 		dailyRecord: [
 			{
 				date: today,
@@ -94,55 +102,48 @@ export default function App() {
 	// AsyncStorageから記録を取得
 	useEffect(() => {
 		(async () => {
-			const recordAsString: string | null = await AsyncStorage.getItem(
-				"record"
-			);
+			const storedRecordAsString: string | null =
+				await AsyncStorage.getItem("record");
 			// AsyncStorageに記録がないので、デフォルトのrecordを利用する
-			if (recordAsString === null) {
+			if (storedRecordAsString === null) {
 			}
 			// AsyncStorageから記録取得、stateにsetする
 			else {
-				const record = JSON.parse(recordAsString);
-				const latestDailyRecord = record.dailyRecord[0];
+				const storedRecord = JSON.parse(storedRecordAsString);
+				const latestDailyRecord = storedRecord.dailyRecord[0];
 
-				// アプリ起動日が、前回起動日と同日だったら、記録を取得
-				if (
-					latestDailyRecord.date === today // 左辺プロパティ名を取得するもの
-				) {
+				// アプリ起動日が、前回起動日と同日の場合
+				if (latestDailyRecord.date === today) {
 					setRecord({
-						...record,
-						dailyRecord: [
-							{
-								...record.dailyRecord[0],
-								tookMedicine: latestDailyRecord.tookMedicine,
-								haveBleeding: latestDailyRecord.haveBleeding,
-							},
-							...record.dailyRecord.slice(1),
-						],
+						...storedRecord,
 					});
 				}
+
 				// アプリ起動日が、前回起動日と異なる日だったら、前回から今日までの記録を追加
 				else {
 					let latestDate = new Date(latestDailyRecord.date);
 					let todayDate = new Date(today);
 
-					let lapsedRecords: Array<dailyRecordType> = [];
-					// 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることのに注意
+					let lapsedDailyRecords: Array<dailyRecordType> = [];
+					// 時刻まで比較すると、左項は0時0分0秒、右項は現在時刻になることに注意
 					while (latestDate.getTime() < todayDate.getTime()) {
 						latestDate.setDate(latestDate.getDate() + 1);
-						lapsedRecords = [
+						lapsedDailyRecords = [
 							{
 								date: getDateStrings(latestDate),
 								tookMedicine: false,
 								haveBleeding: false,
 							},
-							...lapsedRecords,
+							...lapsedDailyRecords,
 						];
 					}
 
 					setRecord({
-						...record,
-						dailyRecord: [...lapsedRecords, ...record.dailyRecord],
+						...storedRecord,
+						dailyRecord: [
+							...lapsedDailyRecords,
+							...storedRecord.dailyRecord,
+						],
 					});
 				}
 			}
@@ -153,6 +154,7 @@ export default function App() {
 	// AsyncStorageに記録を保存
 	useEffect(() => {
 		AsyncStorage.setItem("record", JSON.stringify(record));
+		console.log("stored");
 	}, [record]);
 
 	// 注意！AsyncStorageを初期化
