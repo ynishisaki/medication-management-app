@@ -6,7 +6,10 @@ import { TodaysRecord } from "./components/TodaysRecord";
 import { WeeklyRecord } from "./components/WeeklyRecord";
 import { CurrentSheet } from "./components/CurrentSheet";
 
-export type recordType = Array<dailyRecordType>;
+export type recordType = {
+	startDate: string;
+	dailyRecord: Array<dailyRecordType>;
+};
 
 export interface dailyRecordType {
 	date: string;
@@ -30,22 +33,28 @@ export default function App() {
 	let countDays = 0;
 	let countBleedingDays = 0;
 
-	const [record, setRecord] = useState<recordType>([
-		{
-			date: today,
-			tookMedicine: false, // 今日薬を飲んだか
-			haveBleeding: false, // 今日出血があったか
-		},
-	]);
+	const [record, setRecord] = useState<recordType>({
+		startDate: today,
+		dailyRecord: [
+			{
+				date: today,
+				tookMedicine: false, // 今日薬を飲んだか
+				haveBleeding: false, // 今日出血があったか
+			},
+		],
+	});
 
 	function onPressTookMedicine() {
-		setRecord([
-			{
-				...record[0],
-				tookMedicine: !record[0].tookMedicine, // isTookMedicineは前回の値であることに注意
-			},
-			...record.slice(1),
-		]);
+		setRecord({
+			...record,
+			dailyRecord: [
+				{
+					...record.dailyRecord[0],
+					tookMedicine: !record.dailyRecord[0].tookMedicine, // isTookMedicineは前回の値であることに注意
+				},
+				...record.dailyRecord.slice(1),
+			],
+		});
 
 		// jsonから全日数分のtrueを数える
 		// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
