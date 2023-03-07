@@ -3,7 +3,15 @@ import { recordType } from "../App";
 import { RightIcon } from "./Icons";
 import { WeeklyCheckBox } from "./WeeklyCheckBox";
 
-export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
+export const WeeklyRecord = ({
+	recordProps,
+	countTakeMedicineDays,
+	countHaveBleedingDays,
+}: {
+	recordProps: recordType;
+	countTakeMedicineDays: number;
+	countHaveBleedingDays: number;
+}) => {
 	const date = new Date();
 	const week = date.getDay();
 	const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
@@ -18,6 +26,27 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 			? 7
 			: recordProps.dailyRecord.length;
 
+	// jsonから、今日から直近で出血が何日連続しているか数える
+	// let countTakeMedicineDays = 0;
+	// for (let i = 0; i < recordProps.dailyRecord.length; i++) {
+	// 	if (recordProps.dailyRecord[i].haveBleeding === true) {
+	// 		countTakeMedicineDays++;
+	// 	} else {
+	// 		break;
+	// 	}
+	// }
+
+	// let countHaveBleedingDays = 0;
+	// for (let i = 0; i < recordProps.dailyRecord.length; i++) {
+	// 	if (recordProps.dailyRecord[i].haveBleeding === true) {
+	// 		countHaveBleedingDays++;
+	// 	} else {
+	// 		break;
+	// 	}
+	// }
+
+	// countHaveBleedingDays = !recordProps.dailyRecord[0].haveBleeding ? count + 1 : 0;
+
 	return (
 		<>
 			<View style={styles.titleContainer}>
@@ -27,9 +56,15 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 			<View style={styles.bodyContainer}>
 				<View style={styles.bodyTextLayout}>
 					<Text style={styles.subtitleText}>服薬</Text>
-					<Text style={styles.numberOfDaysText}>{`${2}2日目`}</Text>
+					<Text
+						style={
+							styles.numberOfDaysText
+						}>{`${countTakeMedicineDays}日目`}</Text>
 					<Text style={styles.subtitleText}>出血</Text>
-					<Text style={styles.numberOfDaysText}>{`${2}2日目`}</Text>
+					<Text
+						style={
+							styles.numberOfDaysText
+						}>{`${countHaveBleedingDays}日目`}</Text>
 				</View>
 				<View style={styles.bodyRecordLayout}>
 					{recordLength === 7
@@ -69,9 +104,11 @@ export const WeeklyRecord = ({ recordProps }: { recordProps: recordType }) => {
 												}
 											</Text>
 											<WeeklyCheckBox
+												title='服薬'
 												isChecked={record.tookMedicine}
 											/>
 											<WeeklyCheckBox
+												title='出血'
 												isChecked={record.haveBleeding}
 											/>
 										</View>

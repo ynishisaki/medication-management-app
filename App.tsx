@@ -35,8 +35,8 @@ export default function App() {
 	const today = getDateStrings(new Date()); // YYYY-DD-MM
 
 	// 薬を飲み始めて何日目か
-	let countDays = 0;
-	let countBleedingDays = 0;
+	let countTakeMecidineDays = 0;
+	let countHaveBleedingDays = 0;
 
 	const [record, setRecord] = useState<recordType>({
 		initialSheetSettings: {
@@ -67,12 +67,14 @@ export default function App() {
 		// jsonから全日数分のtrueを数える
 		// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
 		const trueDays = record.dailyRecord.filter(
-			(record) => record.tookMedicine === true
+			(dailyRecord) => dailyRecord.tookMedicine === true
 		).length;
 
-		countDays = !record.dailyRecord[0].tookMedicine
+		countTakeMecidineDays = !record.dailyRecord[0].tookMedicine
 			? trueDays + 1
 			: trueDays; // isTookMedicineは前回の値であることに注意
+		console.log("trueDays", trueDays);
+		console.log("countTakeMecidineDays", countTakeMecidineDays);
 	}
 
 	function onPressHaveBleeding() {
@@ -96,7 +98,9 @@ export default function App() {
 				break;
 			}
 		}
-		countBleedingDays = !record.dailyRecord[0].haveBleeding ? count + 1 : 0;
+		countHaveBleedingDays = !record.dailyRecord[0].haveBleeding
+			? count + 1
+			: 0;
 	}
 
 	// AsyncStorageから記録を取得
@@ -159,15 +163,16 @@ export default function App() {
 
 	// 注意！AsyncStorageを初期化
 	// useEffect(() => {
-	//     (async () => {
-	//         await AsyncStorage.clear();
-	//     })();
+	// 	(async () => {
+	// 		await AsyncStorage.clear();
+	// 	})();
 	// }, []);
 
 	// for check
 	console.log(JSON.stringify(record));
-	console.log("countDays: " + countDays);
-	console.log("countBleedingDays: " + countBleedingDays);
+	console.log("countTakeMecidineDays: " + countTakeMecidineDays);
+	console.log("countHaveBleedingDays: " + countHaveBleedingDays);
+	console.log();
 
 	return (
 		<View style={styles.container}>
@@ -187,11 +192,16 @@ export default function App() {
 						/>
 					</View>
 					<View style={styles.weeklyRecord}>
-						<WeeklyRecord recordProps={record} />
+						<WeeklyRecord
+							recordProps={record}
+							countTakeMedicineDays={countTakeMecidineDays}
+							countHaveBleedingDays={countHaveBleedingDays}
+						/>
 					</View>
 					<View style={styles.sheetRecord}>
 						<CurrentSheet
-							countDays={countDays}
+							// countTakeMedicineDays={countTakeMecidineDays}
+							// countHaveBleedingDays={countHaveBleedingDays}
 							recordProps={record}
 						/>
 					</View>

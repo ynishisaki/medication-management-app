@@ -4,10 +4,10 @@ import { RightIcon } from "./Icons";
 import { CurrentSheetCheckBox } from "./CurrentSheetCheckBox";
 
 export const CurrentSheet = ({
-	countDays,
+	// countDays,
 	recordProps,
 }: {
-	countDays: number;
+	// countDays: number;
 	recordProps: recordType;
 }) => {
 	const recordLength =
