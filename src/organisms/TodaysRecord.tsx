@@ -1,18 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
-import { recordState, recordType } from "../../App";
-import Title from "../TodaysTitle";
-import Message from "../TodaysMessage";
-import CheckBox from "../TodaysCheckBox";
+import { StyleSheet, View } from "react-native";
+import { recordState } from "../../App";
+import Title from "../molecules/TodaysTitle";
+import Message from "../molecules/TodaysMessage";
+import CheckBox from "../molecules/TodaysCheckBox";
 import { useRecoilState } from "recoil";
 
-export const TodaysRecord = ({}: // record,
-// onPressTookMedicine,
-// onPressHaveBleeding,
-{
-	// record: recordType;
-	// onPressTookMedicine: () => void;
-	// onPressHaveBleeding: () => void;
-}) => {
+export const TodaysRecord = () => {
 	const [record, setRecord] = useRecoilState(recordState);
 
 	function onPressTookMedicine() {

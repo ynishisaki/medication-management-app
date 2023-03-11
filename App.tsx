@@ -1,7 +1,7 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MenuIcon } from "./src/components/Icons";
+import { MenuIcon } from "./src/atoms/Icons";
 import { TodaysRecord } from "./src/layouts/TodaysRecord";
 import { WeeklyRecord } from "./src/layouts/WeeklyRecord";
 import { CurrentSheet } from "./src/layouts/CurrentSheet";

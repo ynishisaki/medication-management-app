@@ -1,17 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useRecoilValue } from "recoil";
 import { recordState, recordType } from "../../App";
-import { RightIcon } from "../components/Icons";
-import { WeeklyCheckBox } from "../WeeklyCheckBox";
+import { RightIcon } from "../atoms/Icons";
+import { WeeklyCheckBox } from "../molecules/WeeklyCheckBox";
 
-export const WeeklyRecord = ({}: // record,
-// countTakeMedicineDays,
-// countHaveBleedingDays,
-{
-	// record: recordType;
-	// countTakeMedicineDays: number;
-	// countHaveBleedingDays: number;
-}) => {
+export const WeeklyRecord = () => {
 	const record = useRecoilValue(recordState);
 
 	// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
@@ -47,27 +40,6 @@ export const WeeklyRecord = ({}: // record,
 
 	const recordLength =
 		record.dailyRecord.length >= 7 ? 7 : record.dailyRecord.length;
-
-	// jsonから、今日から直近で出血が何日連続しているか数える
-	// let countTakeMedicineDays = 0;
-	// for (let i = 0; i < record.dailyRecord.length; i++) {
-	// 	if (record.dailyRecord[i].haveBleeding === true) {
-	// 		countTakeMedicineDays++;
-	// 	} else {
-	// 		break;
-	// 	}
-	// }
-
-	// let countHaveBleedingDays = 0;
-	// for (let i = 0; i < record.dailyRecord.length; i++) {
-	// 	if (record.dailyRecord[i].haveBleeding === true) {
-	// 		countHaveBleedingDays++;
-	// 	} else {
-	// 		break;
-	// 	}
-	// }
-
-	// countHaveBleedingDays = !record.dailyRecord[0].haveBleeding ? count + 1 : 0;
 
 	return (
 		<>

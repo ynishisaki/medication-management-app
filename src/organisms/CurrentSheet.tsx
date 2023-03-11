@@ -1,15 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useRecoilValue } from "recoil";
 import { recordState } from "../../App";
-import { RightIcon } from "../components/Icons";
-import { CurrentSheetCheckBox } from "../CurrentSheetCheckBox";
+import { RightIcon } from "../atoms/Icons";
+import { CurrentSheetCheckBox } from "../molecules/CurrentSheetCheckBox";
 
-export const CurrentSheet = ({}: // countDays,
-// record,
-{
-	// countDays: number;
-	// record: recordType;
-}) => {
+export const CurrentSheet = () => {
 	const record = useRecoilValue(recordState);
 
 	const recordLength =
