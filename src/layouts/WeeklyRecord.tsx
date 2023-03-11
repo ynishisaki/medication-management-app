@@ -1,17 +1,41 @@
 import { StyleSheet, Text, View } from "react-native";
-import { recordType } from "../App";
-import { RightIcon } from "./Icons";
-import { WeeklyCheckBox } from "./WeeklyCheckBox";
+import { useRecoilValue } from "recoil";
+import { recordState, recordType } from "../../App";
+import { RightIcon } from "../components/Icons";
+import { WeeklyCheckBox } from "../WeeklyCheckBox";
 
-export const WeeklyRecord = ({
-	recordProps,
-	countTakeMedicineDays,
-	countHaveBleedingDays,
-}: {
-	recordProps: recordType;
-	countTakeMedicineDays: number;
-	countHaveBleedingDays: number;
+export const WeeklyRecord = ({}: // record,
+// countTakeMedicineDays,
+// countHaveBleedingDays,
+{
+	// record: recordType;
+	// countTakeMedicineDays: number;
+	// countHaveBleedingDays: number;
 }) => {
+	const record = useRecoilValue(recordState);
+
+	// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
+	const countTakeMedicineDays = () => {
+		const trueDays = record.dailyRecord.filter(
+			(dailyRecord) => dailyRecord.tookMedicine === true
+		).length;
+
+		return trueDays;
+	};
+
+	const countHaveBleedingDays = () => {
+		// jsonから、今日から直近で出血が何日連続しているか数える
+		let count = 0;
+		for (let i = 0; i < record.dailyRecord.length; i++) {
+			if (record.dailyRecord[i].haveBleeding === true) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count;
+	};
+
 	const date = new Date();
 	const week = date.getDay();
 	const weekArr = ["日", "月", "火", "水", "木", "金", "土"];
@@ -22,14 +46,12 @@ export const WeeklyRecord = ({
 	];
 
 	const recordLength =
-		recordProps.dailyRecord.length >= 7
-			? 7
-			: recordProps.dailyRecord.length;
+		record.dailyRecord.length >= 7 ? 7 : record.dailyRecord.length;
 
 	// jsonから、今日から直近で出血が何日連続しているか数える
 	// let countTakeMedicineDays = 0;
-	// for (let i = 0; i < recordProps.dailyRecord.length; i++) {
-	// 	if (recordProps.dailyRecord[i].haveBleeding === true) {
+	// for (let i = 0; i < record.dailyRecord.length; i++) {
+	// 	if (record.dailyRecord[i].haveBleeding === true) {
 	// 		countTakeMedicineDays++;
 	// 	} else {
 	// 		break;
@@ -37,15 +59,15 @@ export const WeeklyRecord = ({
 	// }
 
 	// let countHaveBleedingDays = 0;
-	// for (let i = 0; i < recordProps.dailyRecord.length; i++) {
-	// 	if (recordProps.dailyRecord[i].haveBleeding === true) {
+	// for (let i = 0; i < record.dailyRecord.length; i++) {
+	// 	if (record.dailyRecord[i].haveBleeding === true) {
 	// 		countHaveBleedingDays++;
 	// 	} else {
 	// 		break;
 	// 	}
 	// }
 
-	// countHaveBleedingDays = !recordProps.dailyRecord[0].haveBleeding ? count + 1 : 0;
+	// countHaveBleedingDays = !record.dailyRecord[0].haveBleeding ? count + 1 : 0;
 
 	return (
 		<>
@@ -59,16 +81,16 @@ export const WeeklyRecord = ({
 					<Text
 						style={
 							styles.numberOfDaysText
-						}>{`${countTakeMedicineDays}日目`}</Text>
+						}>{`${countTakeMedicineDays()}日目`}</Text>
 					<Text style={styles.subtitleText}>出血</Text>
 					<Text
 						style={
 							styles.numberOfDaysText
-						}>{`${countHaveBleedingDays}日目`}</Text>
+						}>{`${countHaveBleedingDays()}日目`}</Text>
 				</View>
 				<View style={styles.bodyRecordLayout}>
 					{recordLength === 7
-						? [...recordProps.dailyRecord]
+						? [...record.dailyRecord]
 								.slice(0, recordLength)
 								.reverse()
 								.map((record, index) => (
@@ -88,7 +110,7 @@ export const WeeklyRecord = ({
 										</View>
 									</>
 								))
-						: [...recordProps.dailyRecord]
+						: [...record.dailyRecord]
 								.reverse()
 								.map((record, index) => (
 									<>

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { DropLgIcon, PillLgIcon } from "./Icons";
+import { DropLgIcon, PillLgIcon } from "./components/Icons";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 // 薬飲んだかと、出血したかチェックボックス

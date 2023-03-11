@@ -1,19 +1,19 @@
 import { StyleSheet, Text, View } from "react-native";
-import { recordType } from "../App";
-import { RightIcon } from "./Icons";
-import { CurrentSheetCheckBox } from "./CurrentSheetCheckBox";
+import { useRecoilValue } from "recoil";
+import { recordState } from "../../App";
+import { RightIcon } from "../components/Icons";
+import { CurrentSheetCheckBox } from "../CurrentSheetCheckBox";
 
-export const CurrentSheet = ({
-	// countDays,
-	recordProps,
-}: {
+export const CurrentSheet = ({}: // countDays,
+// record,
+{
 	// countDays: number;
-	recordProps: recordType;
+	// record: recordType;
 }) => {
+	const record = useRecoilValue(recordState);
+
 	const recordLength =
-		recordProps.dailyRecord.length >= 7
-			? 7
-			: recordProps.dailyRecord.length;
+		record.dailyRecord.length >= 7 ? 7 : record.dailyRecord.length;
 
 	return (
 		<>
@@ -32,7 +32,7 @@ export const CurrentSheet = ({
 				</View>
 				<View style={styles.bodyRecordContainer}>
 					<View style={styles.bodyRecordLayout}>
-						{[...recordProps.dailyRecord]
+						{[...record.dailyRecord]
 							.slice(0, recordLength)
 							.reverse()
 							.map((record, index) => (

@@ -1,10 +1,11 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MenuIcon } from "./components/Icons";
-import { TodaysRecord } from "./components/TodaysRecord";
-import { WeeklyRecord } from "./components/WeeklyRecord";
-import { CurrentSheet } from "./components/CurrentSheet";
+import { MenuIcon } from "./src/components/Icons";
+import { TodaysRecord } from "./src/layouts/TodaysRecord";
+import { WeeklyRecord } from "./src/layouts/WeeklyRecord";
+import { CurrentSheet } from "./src/layouts/CurrentSheet";
+import { atom, RecoilRoot, selector, useRecoilState } from "recoil";
 
 export type recordType = {
 	initialSheetSettings: initialSheetSettingsType;
@@ -24,21 +25,18 @@ export interface dailyRecordType {
 
 export type getDateStringsType = (selectedDate: Date) => string;
 
-export default function App() {
-	function getDateStrings(selectedDate: Date) {
-		const offset = selectedDate.getTimezoneOffset();
-		selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
+function getDateStrings(selectedDate: Date) {
+	const offset = selectedDate.getTimezoneOffset();
+	selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
 
-		return selectedDate.toISOString().split("T")[0];
-	}
+	return selectedDate.toISOString().split("T")[0];
+}
 
-	const today = getDateStrings(new Date()); // YYYY-DD-MM
+const today = getDateStrings(new Date()); // YYYY-DD-MM
 
-	// 薬を飲み始めて何日目か
-	let countTakeMecidineDays = 0;
-	let countHaveBleedingDays = 0;
-
-	const [record, setRecord] = useState<recordType>({
+export const recordState = atom({
+	key: "1", // unique ID (with respect to other atoms/selectors)
+	default: {
 		initialSheetSettings: {
 			numOfPillsPerSheet: 24,
 			beginSheetIndex: 1,
@@ -50,58 +48,19 @@ export default function App() {
 				haveBleeding: false, // 今日出血があったか
 			},
 		],
-	});
+	},
+});
 
-	function onPressTookMedicine() {
-		setRecord({
-			...record,
-			dailyRecord: [
-				{
-					...record.dailyRecord[0],
-					tookMedicine: !record.dailyRecord[0].tookMedicine, // isTookMedicineは前回の値であることに注意
-				},
-				...record.dailyRecord.slice(1),
-			],
-		});
+export default function App() {
+	return (
+		<RecoilRoot>
+			<AppHome />
+		</RecoilRoot>
+	);
+}
 
-		// jsonから全日数分のtrueを数える
-		// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
-		const trueDays = record.dailyRecord.filter(
-			(dailyRecord) => dailyRecord.tookMedicine === true
-		).length;
-
-		countTakeMecidineDays = !record.dailyRecord[0].tookMedicine
-			? trueDays + 1
-			: trueDays; // isTookMedicineは前回の値であることに注意
-		console.log("trueDays", trueDays);
-		console.log("countTakeMecidineDays", countTakeMecidineDays);
-	}
-
-	function onPressHaveBleeding() {
-		setRecord({
-			...record,
-			dailyRecord: [
-				{
-					...record.dailyRecord[0],
-					haveBleeding: !record.dailyRecord[0].haveBleeding,
-				},
-				...record.dailyRecord.slice(1),
-			],
-		});
-
-		// jsonから、今日から直近で出血が何日連続しているか数える
-		let count = 0;
-		for (let i = 0; i < record.dailyRecord.length; i++) {
-			if (record.dailyRecord[i].haveBleeding === true) {
-				count++;
-			} else {
-				break;
-			}
-		}
-		countHaveBleedingDays = !record.dailyRecord[0].haveBleeding
-			? count + 1
-			: 0;
-	}
+function AppHome() {
+	const [record, setRecord] = useRecoilState<recordType>(recordState);
 
 	// AsyncStorageから記録を取得
 	useEffect(() => {
@@ -170,8 +129,6 @@ export default function App() {
 
 	// for check
 	console.log(JSON.stringify(record));
-	console.log("countTakeMecidineDays: " + countTakeMecidineDays);
-	console.log("countHaveBleedingDays: " + countHaveBleedingDays);
 	console.log();
 
 	return (
@@ -185,25 +142,13 @@ export default function App() {
 				</View>
 				<View style={styles.contentsLayout}>
 					<View style={styles.todaysRecord}>
-						<TodaysRecord
-							recordProps={record}
-							onPressTookMedicine={onPressTookMedicine}
-							onPressHaveBleeding={onPressHaveBleeding}
-						/>
+						<TodaysRecord />
 					</View>
 					<View style={styles.weeklyRecord}>
-						<WeeklyRecord
-							recordProps={record}
-							countTakeMedicineDays={countTakeMecidineDays}
-							countHaveBleedingDays={countHaveBleedingDays}
-						/>
+						<WeeklyRecord />
 					</View>
 					<View style={styles.sheetRecord}>
-						<CurrentSheet
-							// countTakeMedicineDays={countTakeMecidineDays}
-							// countHaveBleedingDays={countHaveBleedingDays}
-							recordProps={record}
-						/>
+						<CurrentSheet />
 					</View>
 				</View>
 			</ImageBackground>
