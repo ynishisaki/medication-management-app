@@ -1,19 +1,29 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useRecoilValue } from "recoil";
-import { recordState, recordType } from "../../App";
+import { recordState } from "../../App";
 import { RightIcon } from "../atoms/Icons";
-import { WeeklyCheckBox } from "../molecules/WeeklyCheckBox";
+import CountRecord from "../molecules/WeeklyCountRecord";
+import CheckBox from "../molecules/WeeklyCheckBox";
 
 export const WeeklyRecord = () => {
 	const record = useRecoilValue(recordState);
 
 	// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
 	const countTakeMedicineDays = () => {
-		const trueDays = record.dailyRecord.filter(
-			(dailyRecord) => dailyRecord.tookMedicine === true
-		).length;
+		// const trueDays = record.dailyRecord.filter(
+		// 	(dailyRecord) => dailyRecord.tookMedicine === true
+		// ).length;
 
-		return trueDays;
+		// return trueDays;
+		let count = 0;
+		for (let i = record.dailyRecord.length - 1; i >= 0; i--) {
+			if (record.dailyRecord[i].tookMedicine === true) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count;
 	};
 
 	const countHaveBleedingDays = () => {
@@ -49,17 +59,14 @@ export const WeeklyRecord = () => {
 			</View>
 			<View style={styles.bodyContainer}>
 				<View style={styles.bodyTextLayout}>
-					<Text style={styles.subtitleText}>服薬</Text>
-					<Text
-						style={
-							styles.numberOfDaysText
-						}>{`${countTakeMedicineDays()}日目`}</Text>
-					<Text style={styles.subtitleText}>出血</Text>
-					<Text
-						style={
-							styles.numberOfDaysText
-						}>{`${countHaveBleedingDays()}日目`}</Text>
+					<CountRecord
+						title='服薬'
+						countDays={countTakeMedicineDays()}></CountRecord>
+					<CountRecord
+						title='出血'
+						countDays={countHaveBleedingDays()}></CountRecord>
 				</View>
+
 				<View style={styles.bodyRecordLayout}>
 					{recordLength === 7
 						? [...record.dailyRecord]
@@ -71,11 +78,11 @@ export const WeeklyRecord = () => {
 											<Text style={styles.weekTextLayout}>
 												{recentWeekArr[index]}
 											</Text>
-											<WeeklyCheckBox
+											<CheckBox
 												title='服薬'
 												isChecked={record.tookMedicine}
 											/>
-											<WeeklyCheckBox
+											<CheckBox
 												title='出血'
 												isChecked={record.haveBleeding}
 											/>
@@ -97,11 +104,11 @@ export const WeeklyRecord = () => {
 													]
 												}
 											</Text>
-											<WeeklyCheckBox
+											<CheckBox
 												title='服薬'
 												isChecked={record.tookMedicine}
 											/>
-											<WeeklyCheckBox
+											<CheckBox
 												title='出血'
 												isChecked={record.haveBleeding}
 											/>

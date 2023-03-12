@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { DropSmIcon, PillSmIcon } from "../atoms/Icons";
 
-export const WeeklyCheckBox = ({
+export default ({
 	title,
 	isChecked,
 }: {
