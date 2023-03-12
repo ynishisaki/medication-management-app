@@ -1,30 +1,13 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
 import { useEffect } from "react";
+import { atom, RecoilRoot, useRecoilState } from "recoil";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { MenuIcon } from "./src/atoms/Icons";
 import { TodaysRecord } from "./src/organisms/TodaysRecord";
 import { WeeklyRecord } from "./src/organisms/WeeklyRecord";
 import { CurrentSheet } from "./src/organisms/CurrentSheet";
-import { atom, RecoilRoot, selector, useRecoilState } from "recoil";
-
-export type recordType = {
-	initialSheetSettings: initialSheetSettingsType;
-	dailyRecord: Array<dailyRecordType>;
-	isAsyncStorageLoaded: boolean;
-};
-
-export interface initialSheetSettingsType {
-	numOfPillsPerSheet: number;
-	beginSheetIndex: number;
-}
-
-export interface dailyRecordType {
-	date: string;
-	tookMedicine: boolean;
-	haveBleeding: boolean;
-}
-
-export type getDateStringsType = (selectedDate: Date) => string;
+import { recordType } from "./src/types/types";
 
 export function getDateStrings(selectedDate: Date) {
 	const offset = selectedDate.getTimezoneOffset();

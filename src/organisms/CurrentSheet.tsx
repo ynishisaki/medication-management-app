@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useRecoilValue } from "recoil";
-import { getDateStrings, recordState } from "../../App";
+import { recordState } from "../../App";
 import { RightIcon } from "../atoms/Icons";
 import { CurrentSheetCheckBox } from "../molecules/CurrentSheetCheckBox";
 

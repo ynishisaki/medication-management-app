@@ -146,18 +146,6 @@ const styles = StyleSheet.create({
 	bodyTextLayout: {
 		marginTop: 8,
 	},
-
-	subtitleText: {
-		fontSize: 10,
-		color: "#CCCCCC",
-	},
-	numberOfDaysText: {
-		fontSize: 16,
-		fontWeight: "600", // semibold
-		color: "#fff",
-		marginBottom: 4,
-	},
-
 	bodyRecordLayout: {
 		flexDirection: "row",
 		// alignItems: "center",

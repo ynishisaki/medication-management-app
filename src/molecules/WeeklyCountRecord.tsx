@@ -10,10 +10,6 @@ export default ({ title, countDays }: { title: string; countDays: number }) => {
 	);
 };
 const styles = StyleSheet.create({
-	bodyTextLayout: {
-		marginTop: 8,
-	},
-
 	subtitleText: {
 		fontSize: 10,
 		color: "#CCCCCC",
