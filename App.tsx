@@ -2,14 +2,15 @@ import { ImageBackground, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuIcon } from "./src/atoms/Icons";
-import { TodaysRecord } from "./src/layouts/TodaysRecord";
-import { WeeklyRecord } from "./src/layouts/WeeklyRecord";
-import { CurrentSheet } from "./src/layouts/CurrentSheet";
+import { TodaysRecord } from "./src/organisms/TodaysRecord";
+import { WeeklyRecord } from "./src/organisms/WeeklyRecord";
+import { CurrentSheet } from "./src/organisms/CurrentSheet";
 import { atom, RecoilRoot, selector, useRecoilState } from "recoil";
 
 export type recordType = {
 	initialSheetSettings: initialSheetSettingsType;
 	dailyRecord: Array<dailyRecordType>;
+	isAsyncStorageLoaded: boolean;
 };
 
 export interface initialSheetSettingsType {
@@ -48,6 +49,7 @@ export const recordState = atom({
 				haveBleeding: false, // 今日出血があったか
 			},
 		],
+		isAsyncStorageLoaded: false,
 	},
 });
 
@@ -69,6 +71,10 @@ function AppHome() {
 				await AsyncStorage.getItem("record");
 			// AsyncStorageに記録がないので、デフォルトのrecordを利用する
 			if (storedRecordAsString === null) {
+				setRecord((oldRecord) => ({
+					...oldRecord,
+					isAsyncStorageLoaded: true,
+				}));
 			}
 			// AsyncStorageから記録取得、stateにsetする
 			else {
@@ -79,6 +85,7 @@ function AppHome() {
 				if (latestDailyRecord.date === today) {
 					setRecord({
 						...storedRecord,
+						isAsyncStorageLoaded: true,
 					});
 				}
 
@@ -107,6 +114,7 @@ function AppHome() {
 							...lapsedDailyRecords,
 							...storedRecord.dailyRecord,
 						],
+						isAsyncStorageLoaded: true,
 					});
 				}
 			}
@@ -117,6 +125,7 @@ function AppHome() {
 	// AsyncStorageに記録を保存
 	useEffect(() => {
 		AsyncStorage.setItem("record", JSON.stringify(record));
+		console.log(record);
 		console.log("stored");
 	}, [record]);
 
@@ -175,35 +184,30 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginTop: 16,
 		marginHorizontal: 16,
-		justifyContent: "center",
 		alignItems: "center",
-		flexWrap: "wrap",
-		alignContent: "flex-start",
 	},
 	todaysRecord: {
-		height: 200,
+		// height: 200,
+		flex: 43,
 		width: 260,
 		marginBottom: 32,
 		backgroundColor: "white",
 		borderRadius: 40,
 	},
 	weeklyRecord: {
-		height: 150,
+		// height: 150,
+		flex: 25,
 		width: 330,
 		marginBottom: 24,
 		backgroundColor: "#63769C",
 		borderRadius: 16,
 	},
 	sheetRecord: {
-		height: 196,
+		// height: 196,
+		flex: 32,
 		width: 330,
+		marginBottom: 24,
 		backgroundColor: "#63769C",
 		borderRadius: 16,
 	},
-	// dateText: {
-	// 	fontSize: 40,
-	// 	// lineHeight: 50,
-	// 	borderBottomColor: "black",
-	// 	borderBottomWidth: 1,
-	// },
 });

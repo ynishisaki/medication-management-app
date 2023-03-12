@@ -7,14 +7,15 @@ import { useRecoilState } from "recoil";
 
 export const TodaysRecord = () => {
 	const [record, setRecord] = useRecoilState(recordState);
+	console.log(record);
 
-	function onPressTookMedicine() {
+	function onPressTookMedicine(nextBoolean: boolean) {
 		setRecord({
 			...record,
 			dailyRecord: [
 				{
 					...record.dailyRecord[0],
-					tookMedicine: !record.dailyRecord[0].tookMedicine, // isTookMedicineは前回の値であることに注意
+					tookMedicine: nextBoolean,
 				},
 				...record.dailyRecord.slice(1),
 			],
@@ -52,16 +53,20 @@ export const TodaysRecord = () => {
 			<Title title={showDate(record.dailyRecord[0].date)} />
 			<Message takeRestPeriod={takeRestPeriod} />
 			<View style={styles.checkBoxLayout}>
-				<CheckBox
-					title='服薬'
-					isChecked={record.dailyRecord[0].tookMedicine}
-					onPress={onPressTookMedicine}
-				/>
-				<CheckBox
-					title='出血'
-					isChecked={record.dailyRecord[0].haveBleeding}
-					onPress={onPressHaveBleeding}
-				/>
+				{record.isAsyncStorageLoaded && (
+					<>
+						<CheckBox
+							title='服薬'
+							isChecked={record.dailyRecord[0].tookMedicine}
+							onPress={onPressTookMedicine}
+						/>
+						<CheckBox
+							title='出血'
+							isChecked={record.dailyRecord[0].haveBleeding}
+							onPress={onPressHaveBleeding}
+						/>
+					</>
+				)}
 			</View>
 		</>
 	);

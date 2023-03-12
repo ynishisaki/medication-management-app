@@ -10,8 +10,12 @@ export default ({
 }: {
 	title: string;
 	isChecked: boolean;
-	onPress: () => void;
+	onPress: (nextBoolean: boolean) => void;
 }) => {
+	console.log(isChecked);
+	const onTest = (e: any) => {
+		console.log(e);
+	};
 	return (
 		<View style={styles.container}>
 			<Text style={styles.checkBoxText}>{title}</Text>
@@ -23,7 +27,7 @@ export default ({
 				textComponent={null}
 				disableText={true}
 				ImageComponent={title === "服薬" ? PillLgIcon : DropLgIcon}
-				onPress={onPress}
+				onPress={(nextBoolean) => onPress(nextBoolean)}
 			/>
 		</View>
 	);
