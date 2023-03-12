@@ -1,5 +1,5 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MenuIcon } from "./src/atoms/Icons";
 import { TodaysRecord } from "./src/organisms/TodaysRecord";
@@ -26,7 +26,7 @@ export interface dailyRecordType {
 
 export type getDateStringsType = (selectedDate: Date) => string;
 
-function getDateStrings(selectedDate: Date) {
+export function getDateStrings(selectedDate: Date) {
 	const offset = selectedDate.getTimezoneOffset();
 	selectedDate = new Date(selectedDate.getTime() - offset * 60 * 1000);
 
@@ -40,7 +40,7 @@ export const recordState = atom({
 	default: {
 		initialSheetSettings: {
 			numOfPillsPerSheet: 24,
-			beginSheetIndex: 1,
+			beginSheetIndex: 0, // 0スタート
 		},
 		dailyRecord: [
 			{
