@@ -7,7 +7,7 @@ import { MenuIcon } from "./src/atoms/Icons";
 import { TodaysRecord } from "./src/organisms/TodaysRecord";
 import { WeeklyRecord } from "./src/organisms/WeeklyRecord";
 import { CurrentSheet } from "./src/organisms/CurrentSheet";
-import { recordType } from "./src/types/types";
+import { dailyRecordType, recordType } from "./src/types/types";
 
 export function getDateStrings(selectedDate: Date) {
 	const offset = selectedDate.getTimezoneOffset();
@@ -110,6 +110,7 @@ function AppHome() {
 		AsyncStorage.setItem("record", JSON.stringify(record));
 		console.log(record);
 		console.log("stored");
+		console.log();
 	}, [record]);
 
 	// 注意！AsyncStorageを初期化
@@ -118,10 +119,6 @@ function AppHome() {
 	// 		await AsyncStorage.clear();
 	// 	})();
 	// }, []);
-
-	// for check
-	console.log(JSON.stringify(record));
-	console.log();
 
 	return (
 		<View style={styles.container}>

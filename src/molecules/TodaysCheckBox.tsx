@@ -12,10 +12,6 @@ export default ({
 	isChecked: boolean;
 	onPress: (nextBoolean: boolean) => void;
 }) => {
-	console.log(isChecked);
-	const onTest = (e: any) => {
-		console.log(e);
-	};
 	return (
 		<View style={styles.container}>
 			<Text style={styles.checkBoxText}>{title}</Text>

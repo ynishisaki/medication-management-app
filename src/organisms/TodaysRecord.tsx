@@ -7,7 +7,6 @@ import { useRecoilState } from "recoil";
 
 export const TodaysRecord = () => {
 	const [record, setRecord] = useRecoilState(recordState);
-	console.log(record);
 
 	function onPressTookMedicine(nextBoolean: boolean) {
 		setRecord({

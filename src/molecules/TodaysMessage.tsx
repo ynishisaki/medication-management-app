@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 export default ({ takeRestPeriod }: { takeRestPeriod: boolean }) => {
 	return (

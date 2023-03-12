@@ -1,15 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useRecoilValue } from "recoil";
+
 import { recordState } from "../../App";
+import { CurrentSheetStatus } from "../molecules/CurrentSheetStatus";
+import EstimatedEndDate from "../atoms/CurrentSheetEstimatedEndDate";
 import { RightIcon } from "../atoms/Icons";
-import { CurrentSheetCheckBox } from "../molecules/CurrentSheetCheckBox";
 
 export const CurrentSheet = () => {
 	const record = useRecoilValue(recordState);
-
-	const recordLength =
-		// record.dailyRecord.length >= 7 ? 7 : record.dailyRecord.length;
-		record.dailyRecord.length;
 
 	// シートの終了日を計算
 	// シート１枚目、シート開始index0の場合：
@@ -20,22 +18,22 @@ export const CurrentSheet = () => {
 	// 今日の日付 + ((numOfPillsPerSheet -(recordLength % numOfPillsPerSheet)日
 	// シート2枚目、シート開始index20の場合：
 	// 今日の日付 + ((numOfPillsPerSheet -(recordLength + index) % numOfPillsPerSheet)日
-	const calculateSheetEndDate = () => {
-		// const recordLength = record.dailyRecord.length; // 今日の分は飲んでいようといまいとも含める
-		const numOfPillsPerSheet =
-			record.initialSheetSettings.numOfPillsPerSheet;
-		const beginSheetIndex = record.initialSheetSettings.beginSheetIndex;
 
-		const today = new Date();
-		const todayDate = today.getDate();
-		const remainingDays =
-			numOfPillsPerSheet -
-			((recordLength + beginSheetIndex) % numOfPillsPerSheet);
+	const numOfPillsPerSheet = record.initialSheetSettings.numOfPillsPerSheet;
+	const beginSheetIndex = record.initialSheetSettings.beginSheetIndex;
 
-		const endDate = today.setDate(todayDate + remainingDays);
+	const recordLength = record.dailyRecord.length; // 今日の分を含めてOK
 
-		return getDateStrings(new Date(endDate));
-	};
+	const currentSheetTookMedicineLength =
+		(recordLength + beginSheetIndex) % numOfPillsPerSheet;
+
+	const remainingDays = numOfPillsPerSheet - currentSheetTookMedicineLength;
+
+	const today = new Date();
+	const todayDate = today.getDate();
+	const calculateSheetEndDate = today.setDate(todayDate + remainingDays);
+
+	const estimatedEndDate = getDateStrings(new Date(calculateSheetEndDate));
 
 	function getDateStrings(selectedDate: Date) {
 		const month = selectedDate.getMonth() + 1;
@@ -44,8 +42,6 @@ export const CurrentSheet = () => {
 		return `${month}月${day}日`;
 	}
 
-	const estimatedEndDate = calculateSheetEndDate();
-
 	return (
 		<>
 			<View style={styles.titleContainer}>
@@ -53,31 +49,14 @@ export const CurrentSheet = () => {
 				<RightIcon />
 			</View>
 			<View style={styles.bodyContainer}>
-				<View style={styles.bodyTextLayout}>
-					<Text
-						style={
-							styles.subtitleText
-						}>{`シート終了日(推定)`}</Text>
-					<Text style={styles.numberOfDaysText}>
-						{estimatedEndDate}
-					</Text>
-				</View>
-				<View style={styles.bodyRecordContainer}>
-					<View style={styles.bodyRecordLayout}>
-						{[...record.dailyRecord]
-							.slice(0, recordLength)
-							.reverse()
-							.map((record, index) => (
-								<>
-									<View style={styles.checkBoxLayout}>
-										<CurrentSheetCheckBox
-											isChecked={record.tookMedicine}
-										/>
-									</View>
-								</>
-							))}
-					</View>
-				</View>
+				<EstimatedEndDate estimatedEndDate={estimatedEndDate} />
+				<CurrentSheetStatus
+					record={record}
+					currentSheetTookMedicineLength={
+						currentSheetTookMedicineLength
+					}
+					remainingDays={remainingDays}
+				/>
 			</View>
 		</>
 	);
@@ -118,21 +97,5 @@ const styles = StyleSheet.create({
 		fontWeight: "600", // semibold
 		color: "#fff",
 		marginBottom: 4,
-	},
-	bodyRecordContainer: {
-		flex: 1,
-		// height: 196,
-		// width: 330,
-
-		borderColor: "#fff",
-		borderWidth: 2,
-		borderRadius: 16,
-	},
-	bodyRecordLayout: {
-		flexDirection: "row",
-	},
-	checkBoxLayout: {
-		alignItems: "center",
-		marginHorizontal: 5,
 	},
 });

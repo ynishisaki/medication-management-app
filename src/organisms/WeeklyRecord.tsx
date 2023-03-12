@@ -10,11 +10,6 @@ export const WeeklyRecord = () => {
 
 	// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
 	const countTakeMedicineDays = () => {
-		// const trueDays = record.dailyRecord.filter(
-		// 	(dailyRecord) => dailyRecord.tookMedicine === true
-		// ).length;
-
-		// return trueDays;
 		let count = 0;
 		for (let i = record.dailyRecord.length - 1; i >= 0; i--) {
 			if (record.dailyRecord[i].tookMedicine === true) {
