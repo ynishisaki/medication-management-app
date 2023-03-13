@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import { useRecoilValue } from "recoil";
 import { recordState } from "../../App";
 import { RightIcon } from "../atoms/Icons";
 import CountRecord from "../molecules/WeeklyCountRecord";
 import CheckBox from "../molecules/WeeklyCheckBox";
 
-export const WeeklyRecord = () => {
+export const WeeklyRecord = ({ onPress }: { onPress: () => void }) => {
 	const record = useRecoilValue(recordState);
 
 	// タスク：これは連続で飲んだ日数を数えるよう、修正する必要がある
@@ -48,10 +48,16 @@ export const WeeklyRecord = () => {
 
 	return (
 		<>
-			<View style={styles.titleContainer}>
-				<Text style={styles.titleText}>直近一週間の記録</Text>
-				<RightIcon />
-			</View>
+			<TouchableHighlight
+				// onPress={() => {
+				// 	console.log("test: pressed");
+				// }}
+				onPress={onPress}>
+				<View style={styles.titleContainer}>
+					<Text style={styles.titleText}>直近一週間の記録</Text>
+					<RightIcon />
+				</View>
+			</TouchableHighlight>
 			<View style={styles.bodyContainer}>
 				<View style={styles.bodyTextLayout}>
 					<CountRecord
